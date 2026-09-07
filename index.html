@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>遊戯王 デュエルフィールド</title>
+    <link rel="stylesheet" href="style.css?v=12">
+</head>
+
+<body>
+    <header class="duel-header">
+        <h1>DUEL FIELD</h1>
+        <div class="subtitle">YU-GI-OH! MASTER DUEL ARENA</div>
+    </header>
+
+    <main class="duel-arena">
+        <!-- 相手 手札エリア -->
+        <section class="hand-container opponent-hand">
+            <div class="hand-title">
+                <span>OPPONENT'S HAND</span>
+                <span style="color: #ff3366; font-weight: bold;">(5)</span>
+            </div>
+            <div class="hand-cards">
+                <div class="card-back"></div>
+                <div class="card-back"></div>
+                <div class="card-back"></div>
+                <div class="card-back"></div>
+                <div class="card-back"></div>
+            </div>
+        </section>
+
+        <!-- 相手フィールド -->
+        <div class="player-field opponent-field">
+            <div class="player-info opponent">
+                <span class="player-label">OPPONENT</span>
+                <span id="opponent-lp" class="lp-tag">LP 8000</span>
+            </div>
+            <table class="duel-table">
+                <!-- 相手 後列（魔法・罠、デッキなど） -->
+                <tr>
+                    <td class="zone-slot zone-deck" id="opponent-deck">
+                        <div class="deck-stack">
+                            <div class="deck-card-layer layer-3"></div>
+                            <div class="deck-card-layer layer-2"></div>
+                            <div class="deck-card-layer layer-1"></div>
+                        </div>
+                        <span class="deck-count">35</span>
+                    </td>
+                    <td class="zone-slot zone-spell">
+                        <div class="slot-content">
+                            <span class="slot-name">SPELL</span>
+                            <span class="slot-sub">魔・罠 5</span>
+                        </div>
+                    </td>
+                    <td class="zone-slot zone-spell">
+                        <div class="slot-content">
+                            <span class="slot-name">SPELL</span>
+                            <span class="slot-sub">魔・罠 4</span>
+                        </div>
+                    </td>
+                    <td class="zone-slot zone-spell">
+                        <div class="slot-content">
+                            <span class="slot-name">SPELL</span>
+                            <span class="slot-sub">魔・罠 3</span>
+                        </div>
+                    </td>
+                    <td class="zone-slot zone-spell">
+                        <div class="slot-content">
+                            <span class="slot-name">SPELL</span>
+                            <span class="slot-sub">魔・罠 2</span>
+                        </div>
+                    </td>
+                    <td class="zone-slot zone-spell">
+                        <div class="slot-content">
+                            <span class="slot-name">SPELL</span>
+                            <span class="slot-sub">魔・罠 1</span>
+                        </div>
+                    </td>
+                    <td class="zone-slot zone-extra">
+                        <div class="slot-content">
+                            <span class="slot-name">EXTRA</span>
+                            <span class="slot-sub">EXデッキ</span>
+                        </div>
+                    </td>
+                </tr>
+                <!-- 相手 前列（モンスター、墓地、フィールド） -->
+                <tr>
+                    <td class="zone-slot zone-graveyard">
+                        <div class="slot-content">
+                            <span class="slot-name">GY</span>
+                            <span class="slot-sub">墓地</span>
+                        </div>
+                    </td>
+                    <td class="zone-slot zone-monster">
+                        <div class="slot-content">
+                            <span class="slot-name">MONSTER</span>
+                            <span class="slot-sub">5</span>
+                        </div>
+                    </td>
+                    <td class="zone-slot zone-monster">
+                        <div class="slot-content">
+                            <span class="slot-name">MONSTER</span>
+                            <span class="slot-sub">4</span>
+                        </div>
+                    </td>
+                    <td class="zone-slot zone-monster">
+                        <div class="slot-content">
+                            <span class="slot-name">MONSTER</span>
+                            <span class="slot-sub">3</span>
+                        </div>
+                    </td>
+                    <td class="zone-slot zone-monster">
+                        <div class="slot-content">
+                            <span class="slot-name">MONSTER</span>
+                            <span class="slot-sub">2</span>
+                        </div>
+                    </td>
+                    <td class="zone-slot zone-monster">
+                        <div class="slot-content">
+                            <span class="slot-name">MONSTER</span>
+                            <span class="slot-sub">1</span>
+                        </div>
+                    </td>
+                    <td class="zone-slot zone-field">
+                        <div class="slot-content">
+                            <span class="slot-name">FIELD</span>
+                            <span class="slot-sub">フィールド</span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- 中央エリア：エクストラモンスターゾーン (EMZ) -->
+        <table class="duel-table emz-table">
+            <tr>
+                <td class="zone-empty"></td>
+                <td class="zone-empty"></td>
+                <!-- EMZ 1 (左側) -->
+                <td class="zone-slot zone-emz">
+                    <div class="slot-content">
+                        <span class="slot-name">EX MONSTER</span>
+                        <span class="slot-sub">EMZ (左)</span>
+                    </div>
+                </td>
+                <!-- 中央ロゴバッジ -->
+                <td class="zone-center-badge">
+                    <div class="arena-badge-inner">
+                        <span>DUEL</span>
+                        <span style="font-size: 0.55rem; opacity: 0.7;">ARENA</span>
+                    </div>
+                </td>
+                <!-- EMZ 2 (右側) -->
+                <td class="zone-slot zone-emz">
+                    <div class="slot-content">
+                        <span class="slot-name">EX MONSTER</span>
+                        <span class="slot-sub">EMZ (右)</span>
+                    </div>
+                </td>
+                <td class="zone-empty"></td>
+                <td class="zone-empty"></td>
+            </tr>
+        </table>
+
+        <!-- 自分フィールド -->
+        <div class="player-field you-field">
+            <table class="duel-table">
+                <!-- 自分 前列（モンスター、墓地、フィールド） -->
+                <tr>
+                    <td class="zone-slot zone-field">
+                        <div class="slot-content">
+                            <span class="slot-name">FIELD</span>
+                            <span class="slot-sub">フィールド</span>
+                        </div>
+                    </td>
+                    <td class="zone-slot zone-monster">
+                        <div class="slot-content">
+                            <span class="slot-name">MONSTER</span>
+                            <span class="slot-sub">1</span>
+                        </div>
+                    </td>
+                    <td class="zone-slot zone-monster">
+                        <div class="slot-content">
+                            <span class="slot-name">MONSTER</span>
+                            <span class="slot-sub">2</span>
+                        </div>
+                    </td>
+                    <td class="zone-slot zone-monster">
+                        <div class="slot-content">
+                            <span class="slot-name">MONSTER</span>
+                            <span class="slot-sub">3</span>
+                        </div>
+                    </td>
+                    <td class="zone-slot zone-monster">
+                        <div class="slot-content">
+                            <span class="slot-name">MONSTER</span>
+                            <span class="slot-sub">4</span>
+                        </div>
+                    </td>
+                    <td class="zone-slot zone-monster">
+                        <div class="slot-content">
+                            <span class="slot-name">MONSTER</span>
+                            <span class="slot-sub">5</span>
+                        </div>
+                    </td>
+                    <td class="zone-slot zone-graveyard">
+                        <div class="slot-content">
+                            <span class="slot-name">GY</span>
+                            <span class="slot-sub">墓地</span>
+                        </div>
+                    </td>
+                </tr>
+                <!-- 自分 後列（魔法・罠、デッキなど） -->
+                <tr>
+                    <td class="zone-slot zone-extra">
+                        <div class="slot-content">
+                            <span class="slot-name">EXTRA</span>
+                            <span class="slot-sub">EXデッキ</span>
+                        </div>
+                    </td>
+                    <td class="zone-slot zone-spell">
+                        <div class="slot-content">
+                            <span class="slot-name">SPELL</span>
+                            <span class="slot-sub">魔・罠 1</span>
+                        </div>
+                    </td>
+                    <td class="zone-slot zone-spell">
+                        <div class="slot-content">
+                            <span class="slot-name">SPELL</span>
+                            <span class="slot-sub">魔・罠 2</span>
+                        </div>
+                    </td>
+                    <td class="zone-slot zone-spell">
+                        <div class="slot-content">
+                            <span class="slot-name">SPELL</span>
+                            <span class="slot-sub">魔・罠 3</span>
+                        </div>
+                    </td>
+                    <td class="zone-slot zone-spell">
+                        <div class="slot-content">
+                            <span class="slot-name">SPELL</span>
+                            <span class="slot-sub">魔・罠 4</span>
+                        </div>
+                    </td>
+                    <td class="zone-slot zone-spell">
+                        <div class="slot-content">
+                            <span class="slot-name">SPELL</span>
+                            <span class="slot-sub">魔・罠 5</span>
+                        </div>
+                    </td>
+                    <td class="zone-slot zone-deck" id="player-deck">
+                        <div class="deck-stack">
+                            <div class="deck-card-layer layer-3"></div>
+                            <div class="deck-card-layer layer-2"></div>
+                            <div class="deck-card-layer layer-1"></div>
+                        </div>
+                        <span class="deck-count">35</span>
+                    </td>
+                </tr>
+            </table>
+            <div class="player-info you">
+                <span class="player-label">YOU</span>
+                <div class="turn-controls">
+                    <span id="turn-counter" class="turn-counter">TURN 1</span>
+                    <span id="phase-indicator" class="phase-indicator">MAIN 1</span>
+                    <span id="normal-summon-status" class="summon-status ready">SUMMON READY</span>
+                    <button id="next-phase-button" class="end-turn-button" type="button">NEXT PHASE</button>
+                </div>
+                <span id="player-lp" class="lp-tag">LP 8000</span>
+            </div>
+            <div class="card-count-bar" aria-label="カード枚数">
+                <span class="card-count-item">
+                    <span class="count-label">HAND</span>
+                    <strong id="hand-card-count">0</strong>
+                </span>
+                <span class="card-count-item">
+                    <span class="count-label">FIELD</span>
+                    <strong id="field-card-count">0</strong>
+                </span>
+                <button id="graveyard-list-button" class="card-count-item graveyard-count-button" type="button" title="墓地のカード一覧">
+                    <span class="count-label">GY</span>
+                    <strong id="graveyard-card-count">0</strong>
+                </button>
+            </div>
+        </div>
+
+        <!-- 自分 手札エリア -->
+        <section class="hand-container player-hand">
+            <div class="hand-title">
+                <span>YOUR HAND</span>
+                <span style="color: #00d2ff; font-weight: bold;">(5枚)</span>
+            </div>
+            <div class="hand-cards"></div>
+        </section>
+    </main>
+
+    <script type="module" src="main.js?v=24">
+    </script>
+</body>
+
+</html>

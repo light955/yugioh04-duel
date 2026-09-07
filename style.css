@@ -1,0 +1,1547 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&family=Noto+Sans+JP:wght@400;700&display=swap');
+
+:root {
+    --bg-dark: #07090e;
+    --field-bg: rgba(13, 18, 28, 0.85);
+    --border-cyan: #00d2ff;
+    --border-gold: #e5a93b;
+    --border-red: #ff3366;
+    --border-purple: #9d4edd;
+    
+    /* ゾーンカラー */
+    --monster-color: #ff9f1c;
+    --spell-color: #2ec4b6;
+    --field-color: #20bf6b;
+    --gy-color: #a55eea;
+    --deck-color: #3867d6;
+    --extra-color: #8854d0;
+    --emz-color: #00f2fe;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: radial-gradient(circle at center, #111927 0%, #060910 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    font-family: 'Rajdhani', 'Noto Sans JP', sans-serif;
+    color: #e2e8f0;
+    padding: 24px 20px 40px;
+    overflow-x: auto;
+    position: relative;
+}
+
+/* サイバーグリッド背景 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(rgba(0, 210, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 210, 255, 0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* タイトルエリア */
+.duel-header {
+    text-align: center;
+    margin-bottom: 16px;
+    z-index: 1;
+}
+
+.duel-header h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 4px;
+    color: #00d2ff;
+    text-shadow: 0 0 10px rgba(0, 210, 255, 0.6), 0 0 20px rgba(0, 210, 255, 0.2);
+}
+
+.duel-header .subtitle {
+    font-size: 0.8rem;
+    color: #64748b;
+    letter-spacing: 2px;
+    margin-top: 2px;
+}
+
+/* デュエル盤面全体 */
+.duel-arena {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    background: rgba(10, 14, 23, 0.85);
+    padding: 24px 36px;
+    border-radius: 18px;
+    border: 1px solid rgba(0, 210, 255, 0.25);
+    box-shadow: 
+        0 0 50px rgba(0, 0, 0, 0.95),
+        inset 0 0 40px rgba(0, 210, 255, 0.04);
+}
+
+/* プレイヤーセクションのヘッダー（LPなど） */
+.player-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 10px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+}
+
+.player-info.opponent {
+    color: var(--border-red);
+}
+
+.player-info.you {
+    color: var(--border-cyan);
+}
+
+.player-label {
+    font-size: 0.95rem;
+    letter-spacing: 1.5px;
+}
+
+.lp-tag {
+    min-width: 118px;
+    font-size: 1.25rem;
+    letter-spacing: 2px;
+    text-align: right;
+}
+
+.lp-tag.lp-damage {
+    animation: lp-damage-flash 0.52s ease-out;
+}
+
+@keyframes lp-damage-flash {
+    0%, 100% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+    35% {
+        transform: scale(1.18);
+        color: #ffffff;
+        filter: brightness(2.4);
+        text-shadow: 0 0 18px #ff334f;
+    }
+}
+
+.turn-controls {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.turn-counter,
+.phase-indicator,
+.summon-status {
+    min-width: 70px;
+    padding: 4px 7px;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    border-radius: 3px;
+    background: rgba(4, 10, 18, 0.82);
+    font-size: 0.58rem;
+    line-height: 1;
+    text-align: center;
+}
+
+.phase-indicator {
+    min-width: 72px;
+    color: #91dfff;
+    border-color: rgba(0, 210, 255, 0.58);
+    box-shadow: inset 0 0 8px rgba(0, 210, 255, 0.12);
+}
+
+.phase-indicator[data-phase="battle"] {
+    color: #ff9b8c;
+    border-color: rgba(255, 82, 82, 0.58);
+    box-shadow: inset 0 0 8px rgba(255, 82, 82, 0.14);
+}
+
+.phase-indicator[data-phase="end"] {
+    color: #c1a5de;
+    border-color: rgba(165, 94, 234, 0.52);
+}
+
+.summon-status.ready {
+    color: #66e8c5;
+    border-color: rgba(29, 209, 161, 0.6);
+    box-shadow: inset 0 0 8px rgba(29, 209, 161, 0.12);
+}
+
+.summon-status.used {
+    color: #8c98aa;
+    border-color: rgba(100, 116, 139, 0.4);
+}
+
+.end-turn-button {
+    appearance: none;
+    min-width: 96px;
+    padding: 5px 9px;
+    border: 1px solid #c9a34b;
+    border-radius: 3px;
+    background: linear-gradient(180deg, #33250c 0%, #120d04 100%);
+    color: #f5dfa0;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: inset 0 0 8px rgba(229, 169, 59, 0.16);
+}
+
+body:not(.main-phase) .spell-action-button {
+    opacity: 0.5;
+    filter: saturate(0.55);
+}
+
+body:not(.main-phase) .spell-action-button:hover {
+    transform: none;
+}
+
+.monster-battle-panel .attack-command {
+    grid-column: 1 / -1;
+    width: 100%;
+    border-color: #ff625f;
+    box-shadow: inset 0 0 12px rgba(255, 65, 65, 0.2);
+}
+
+body.battle-phase .monster-battle-panel .attack-command {
+    opacity: 1;
+    filter: none;
+}
+
+body.battle-phase .monster-battle-panel .attack-command:hover {
+    transform: translateY(-1px);
+    border-color: #ffaaa0;
+    background: linear-gradient(180deg, #79241d 0%, #35100b 52%, #130503 100%);
+    box-shadow: 0 0 15px rgba(255, 82, 82, 0.68), inset 0 0 12px rgba(255, 139, 120, 0.18);
+}
+
+body.battle-phase .monster-battle-panel.attack-locked .attack-command {
+    opacity: 0.45;
+    filter: saturate(0.35);
+}
+
+.zone-slot .placed-card.attacking-card {
+    z-index: 220;
+    animation: direct-attack-motion 0.52s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+}
+
+@keyframes direct-attack-motion {
+    0% {
+        transform: translateY(0) scale(1);
+        filter: brightness(1);
+    }
+    46% {
+        transform: translateY(-38px) scale(1.1);
+        filter: brightness(1.8);
+        box-shadow: 0 0 24px rgba(255, 82, 82, 0.82);
+    }
+    100% {
+        transform: translateY(0) scale(1);
+        filter: brightness(1);
+    }
+}
+
+.opponent-field.direct-hit {
+    animation: direct-hit-field 0.52s ease-out;
+}
+
+@keyframes direct-hit-field {
+    0%, 100% {
+        transform: translateX(0);
+        filter: brightness(1);
+    }
+    22% {
+        transform: translateX(-5px);
+        filter: brightness(1.65);
+    }
+    42% {
+        transform: translateX(5px);
+    }
+    62% {
+        transform: translateX(-3px);
+    }
+}
+
+.duel-result-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 4000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(1, 4, 9, 0.84);
+    opacity: 0;
+    transition: opacity 0.28s ease;
+}
+
+.duel-result-overlay[hidden] {
+    display: none !important;
+}
+
+.duel-result-overlay.show {
+    opacity: 1;
+}
+
+.duel-result-panel {
+    width: min(440px, calc(100vw - 32px));
+    padding: 30px 24px 26px;
+    border: 2px solid #d5b75e;
+    border-radius: 6px;
+    background: linear-gradient(155deg, #202b32 0%, #081318 50%, #030609 100%);
+    color: #ffffff;
+    text-align: center;
+    box-shadow: 0 0 0 1px #4b3510, 0 0 42px rgba(255, 211, 91, 0.4), 0 28px 70px rgba(0, 0, 0, 0.85);
+    transform: translateY(12px) scale(0.94);
+    transition: transform 0.28s ease;
+}
+
+.duel-result-overlay.show .duel-result-panel {
+    transform: translateY(0) scale(1);
+}
+
+.duel-result-kicker {
+    color: #a99a6b;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.58rem;
+    letter-spacing: 2px;
+}
+
+.duel-result-panel h2 {
+    margin-top: 7px;
+    color: #ffe89a;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.1rem;
+    letter-spacing: 4px;
+    text-shadow: 0 0 20px rgba(255, 217, 94, 0.58);
+}
+
+.duel-result-overlay.defeat .duel-result-panel {
+    border-color: #b54a60;
+    box-shadow: 0 0 0 1px #42121c, 0 0 42px rgba(255, 51, 102, 0.35), 0 28px 70px rgba(0, 0, 0, 0.85);
+}
+
+.duel-result-overlay.defeat h2 {
+    color: #ff829a;
+    text-shadow: 0 0 20px rgba(255, 51, 102, 0.55);
+}
+
+.duel-result-message {
+    margin-top: 8px;
+    color: #b8c2cf;
+    font-size: 0.82rem;
+}
+
+.duel-restart-button {
+    appearance: none;
+    margin-top: 22px;
+    min-width: 148px;
+    height: 38px;
+    border: 1px solid #d5b75e;
+    border-radius: 3px;
+    background: linear-gradient(180deg, #443314 0%, #171005 100%);
+    color: #fff1bd;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    cursor: pointer;
+}
+
+.duel-restart-button:hover {
+    color: #ffffff;
+    border-color: #ffe28a;
+    box-shadow: 0 0 14px rgba(255, 217, 94, 0.45);
+}
+
+.end-turn-button:hover {
+    color: #ffffff;
+    border-color: #f2cf70;
+    box-shadow: 0 0 11px rgba(229, 169, 59, 0.45), inset 0 0 9px rgba(229, 169, 59, 0.22);
+}
+
+.card-count-bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 6px;
+    padding: 1px 10px 0;
+}
+
+.card-count-item {
+    min-width: 68px;
+    height: 25px;
+    padding: 0 8px;
+    border: 1px solid rgba(100, 116, 139, 0.45);
+    border-radius: 3px;
+    background: rgba(4, 10, 18, 0.76);
+    color: #dbeafe;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 9px;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.count-label {
+    color: #74849a;
+    font-size: 0.5rem;
+    letter-spacing: 0.8px;
+}
+
+.card-count-item strong {
+    color: #7ddfff;
+    font-size: 0.72rem;
+}
+
+.graveyard-count-button {
+    appearance: none;
+    border-color: rgba(165, 94, 234, 0.62);
+    cursor: pointer;
+}
+
+.graveyard-count-button strong {
+    color: #d3a9ff;
+}
+
+.graveyard-count-button:hover {
+    border-color: #b77cff;
+    box-shadow: 0 0 10px rgba(165, 94, 234, 0.38), inset 0 0 8px rgba(165, 94, 234, 0.12);
+}
+
+/* デュエルテーブル（幅・列を完全に固定） */
+.duel-table {
+    table-layout: fixed;
+    width: 646px;
+    border-collapse: separate;
+    border-spacing: 12px;
+    margin: 0 auto;
+}
+
+/* 各カードゾーン（マス目）のスタイル */
+.zone-slot {
+    width: 82px;
+    min-width: 82px;
+    max-width: 82px;
+    height: 120px;
+    min-height: 120px;
+    max-height: 120px;
+    border-radius: 6px;
+    background: rgba(20, 27, 42, 0.65);
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    position: relative;
+    overflow: visible;
+    box-sizing: border-box;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.zone-slot:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 0 16px currentColor;
+}
+
+/* スロット内部のデザイン */
+.slot-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 4px;
+    gap: 4px;
+}
+
+.slot-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    line-height: 1.1;
+}
+
+.slot-sub {
+    font-size: 0.65rem;
+    opacity: 0.65;
+}
+
+/* ゾーンタイプ別の装飾カラー */
+
+/* メインモンスターゾーン */
+.zone-monster {
+    border-color: rgba(255, 159, 28, 0.45);
+    color: var(--monster-color);
+}
+.zone-monster:hover {
+    border-color: var(--monster-color);
+    box-shadow: 0 0 16px rgba(255, 159, 28, 0.5), inset 0 0 10px rgba(255, 159, 28, 0.2);
+}
+
+/* 魔法・罠ゾーン */
+.zone-spell {
+    border-color: rgba(46, 196, 182, 0.45);
+    color: var(--spell-color);
+}
+.zone-spell:hover {
+    border-color: var(--spell-color);
+    box-shadow: 0 0 16px rgba(46, 196, 182, 0.5), inset 0 0 10px rgba(46, 196, 182, 0.2);
+}
+
+/* フィールド魔法ゾーン */
+.zone-field {
+    border-color: rgba(32, 191, 107, 0.5);
+    color: var(--field-color);
+}
+.zone-field:hover {
+    border-color: var(--field-color);
+    box-shadow: 0 0 16px rgba(32, 191, 107, 0.5), inset 0 0 10px rgba(32, 191, 107, 0.2);
+}
+
+/* 墓地ゾーン */
+.zone-graveyard {
+    border-color: rgba(165, 94, 234, 0.5);
+    color: var(--gy-color);
+}
+.zone-graveyard:hover {
+    border-color: var(--gy-color);
+    box-shadow: 0 0 16px rgba(165, 94, 234, 0.5), inset 0 0 10px rgba(165, 94, 234, 0.2);
+}
+
+/* デッキゾーン */
+.zone-deck {
+    border-color: rgba(56, 103, 214, 0.5);
+    color: var(--deck-color);
+}
+.zone-deck:hover {
+    border-color: var(--deck-color);
+    box-shadow: 0 0 16px rgba(56, 103, 214, 0.5), inset 0 0 10px rgba(56, 103, 214, 0.2);
+}
+
+#player-deck {
+    cursor: pointer;
+}
+
+#player-deck::after {
+    content: 'DRAW';
+    position: absolute;
+    top: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #e2f8ff;
+    text-shadow: 0 0 8px rgba(0, 210, 255, 0.8);
+    pointer-events: none;
+}
+
+#player-deck .deck-stack {
+    margin-top: 16px;
+}
+
+/* デッキ積層ビジュアル（カードの山） */
+.deck-stack {
+    position: relative;
+    width: 56px;
+    height: 80px;
+    margin: 4px auto 0;
+}
+
+.deck-card-layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #3d1c06 0%, #1a0c02 50%, #5a2a0a 100%);
+    border: 1.5px solid #a67c42;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+}
+
+/* カードの山の中心にアーク模様 */
+.deck-card-layer::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70%;
+    height: 75%;
+    border: 1px solid rgba(229, 169, 59, 0.35);
+    border-radius: 3px;
+    background: radial-gradient(circle, #854d19 10%, transparent 60%);
+}
+
+/* 3層で積み重なった見た目 */
+.deck-card-layer.layer-3 {
+    top: -4px;
+    left: -3px;
+    opacity: 0.5;
+}
+
+.deck-card-layer.layer-2 {
+    top: -2px;
+    left: -1.5px;
+    opacity: 0.75;
+}
+
+.deck-card-layer.layer-1 {
+    top: 0;
+    left: 0;
+    opacity: 1;
+}
+
+/* デッキ残り枚数バッジ */
+.deck-count {
+    display: block;
+    margin-top: 4px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--deck-color);
+    text-align: center;
+}
+
+/* エクストラデッキゾーン */
+.zone-extra {
+    border-color: rgba(136, 84, 208, 0.5);
+    color: var(--extra-color);
+}
+.zone-extra:hover {
+    border-color: var(--extra-color);
+    box-shadow: 0 0 16px rgba(136, 84, 208, 0.5), inset 0 0 10px rgba(136, 84, 208, 0.2);
+}
+
+/* ===== エクストラモンスターゾーン (EMZ) ===== */
+.zone-emz {
+    border: 2px dashed rgba(0, 242, 254, 0.6);
+    color: var(--emz-color);
+    background: radial-gradient(circle, rgba(0, 242, 254, 0.12) 0%, rgba(13, 22, 38, 0.7) 100%);
+    box-shadow: 0 0 10px rgba(0, 242, 254, 0.25), inset 0 0 12px rgba(0, 242, 254, 0.15);
+}
+
+.zone-emz:hover {
+    border-color: var(--emz-color);
+    border-style: solid;
+    box-shadow: 0 0 20px rgba(0, 242, 254, 0.7), inset 0 0 15px rgba(0, 242, 254, 0.3);
+}
+
+.zone-emz .slot-name {
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+/* 空白セル */
+.zone-empty {
+    width: 82px;
+    height: 120px;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    cursor: default !important;
+}
+
+.zone-empty:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* 中央バッジスロット */
+.zone-center-badge {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.arena-badge-inner {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 6px 12px;
+    border: 1px solid rgba(0, 210, 255, 0.3);
+    border-radius: 20px;
+    background: rgba(10, 18, 30, 0.8);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 1.5px;
+    color: #00d2ff;
+    box-shadow: 0 0 12px rgba(0, 210, 255, 0.15);
+}
+
+/* ===== 手札エリア ===== */
+.hand-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    z-index: 2;
+}
+
+.hand-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 1.5px;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hand-cards {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    min-height: 110px;
+    padding: 6px 16px;
+}
+
+/* 相手手札（裏面） */
+.opponent-hand .hand-cards {
+    gap: -15px; /* 重なり効果 */
+}
+
+.card-back {
+    width: 68px;
+    height: 100px;
+    border-radius: 5px;
+    background: linear-gradient(135deg, #3d1c06 0%, #1a0c02 50%, #5a2a0a 100%);
+    border: 2px solid #a67c42;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+    cursor: default;
+}
+
+.card-back::before {
+    content: '';
+    width: 75%;
+    height: 80%;
+    border: 1px solid rgba(229, 169, 59, 0.5);
+    border-radius: 3px;
+    background: radial-gradient(circle, #854d19 10%, transparent 60%);
+}
+
+.card-back:hover {
+    transform: translateY(-4px);
+}
+
+/* 自分手札（表面カード） */
+.player-hand {
+    margin-top: 8px;
+}
+
+.player-hand .hand-cards {
+    perspective: 1000px;
+}
+
+.hand-card {
+    width: 78px;
+    height: 114px;
+    border-radius: 6px;
+    background: #1e2533;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 5px 6px;
+    cursor: pointer;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.7);
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+}
+
+/* カードタイプ別ボーダー */
+.hand-card.monster-card {
+    background: linear-gradient(180deg, #593510 0%, #2b1807 100%);
+    border-color: #d37e28;
+}
+
+.hand-card.spell-card {
+    background: linear-gradient(180deg, #09473f 0%, #052420 100%);
+    border-color: #1dd1a1;
+}
+
+.hand-card.trap-card {
+    background: linear-gradient(180deg, #54113a 0%, #2b081d 100%);
+    border-color: #e056fd;
+}
+
+/* 手札カードのホバーリフトアップ効果 */
+.hand-card:hover {
+    transform: translateY(-20px) scale(1.12);
+    z-index: 100;
+    box-shadow: 0 14px 30px rgba(0, 210, 255, 0.5);
+    border-color: #00d2ff;
+}
+
+.card-header-mini {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.55rem;
+    font-weight: bold;
+    color: #fff;
+    gap: 2px;
+    min-width: 0;
+}
+
+.card-header-mini span:first-child {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    flex: 1;
+    text-align: left;
+}
+
+.card-level-mini {
+    color: #ff9f1c;
+    font-size: 0.52rem;
+    flex-shrink: 0;
+}
+
+.card-illustration-mini {
+    width: 100%;
+    height: 48px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.card-footer-mini {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.5rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    color: #cbd5e1;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    gap: 2px;
+}
+
+/* ===== カード選択・配置システム ===== */
+/* 選択中の手札カード */
+.hand-card.selected {
+    transform: translateY(-26px) scale(1.18) !important;
+    z-index: 150 !important;
+    border-color: #ffd700 !important;
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.9), 0 10px 20px rgba(0, 0, 0, 0.8) !important;
+    animation: pulse-selected 1.2s infinite alternate ease-in-out;
+}
+
+@keyframes pulse-selected {
+    0% {
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+    }
+    100% {
+        box-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 0 10px #fff;
+    }
+}
+
+/* 配置可能なゾーンのハイライトアニメーション */
+.zone-slot.selectable-target {
+    border-color: #00d2ff !important;
+    animation: target-pulse 1s infinite alternate;
+    cursor: copy !important;
+}
+
+.zone-slot.tribute-target {
+    border-color: #ff7a59 !important;
+    animation: tribute-target-pulse 0.85s infinite alternate;
+    cursor: pointer !important;
+}
+
+.zone-slot.tribute-selected {
+    border-color: #ffd66e !important;
+    background-color: rgba(255, 173, 51, 0.2) !important;
+    box-shadow: 0 0 24px rgba(255, 173, 51, 0.85), inset 0 0 16px rgba(255, 214, 110, 0.3) !important;
+}
+
+@keyframes tribute-target-pulse {
+    0% {
+        background-color: rgba(255, 82, 82, 0.08);
+        box-shadow: 0 0 8px rgba(255, 82, 82, 0.35), inset 0 0 8px rgba(255, 82, 82, 0.2);
+    }
+    100% {
+        background-color: rgba(255, 122, 89, 0.22);
+        box-shadow: 0 0 22px rgba(255, 122, 89, 0.8), inset 0 0 14px rgba(255, 173, 51, 0.25);
+    }
+}
+
+@keyframes target-pulse {
+    0% {
+        background-color: rgba(0, 210, 255, 0.1);
+        box-shadow: 0 0 8px rgba(0, 210, 255, 0.4), inset 0 0 8px rgba(0, 210, 255, 0.3);
+    }
+    100% {
+        background-color: rgba(0, 210, 255, 0.25);
+        box-shadow: 0 0 22px rgba(0, 210, 255, 0.9), inset 0 0 16px rgba(0, 210, 255, 0.6);
+    }
+}
+
+/* ゾーンに配置されたカード */
+.zone-slot.occupied {
+    padding: 2px;
+}
+
+.zone-slot .placed-card {
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    animation: card-summon 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+}
+
+.zone-slot .placed-card.face-down {
+    background: linear-gradient(135deg, #3d1c06 0%, #1a0c02 50%, #5a2a0a 100%);
+    border: 1.5px solid #a67c42;
+    position: relative;
+}
+
+.zone-slot .placed-card.face-down::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 68%;
+    height: 74%;
+    border: 1px solid rgba(229, 169, 59, 0.45);
+    border-radius: 3px;
+    background: radial-gradient(circle, #854d19 10%, transparent 60%);
+}
+
+.zone-slot .placed-card.activating-card {
+    pointer-events: none;
+    animation: set-card-activate 0.42s ease-out;
+    box-shadow: 0 0 24px rgba(255, 224, 117, 0.85), 0 0 10px rgba(29, 209, 161, 0.75);
+}
+
+@keyframes set-card-activate {
+    0% {
+        transform: rotateY(90deg) scale(0.92);
+        filter: brightness(2.2);
+    }
+    55% {
+        transform: rotateY(0deg) scale(1.08);
+        filter: brightness(1.65);
+    }
+    100% {
+        transform: rotateY(0deg) scale(1);
+        filter: brightness(1);
+    }
+}
+
+.graveyard-card {
+    position: absolute;
+    inset: 4px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, rgba(62, 35, 86, 0.95), rgba(17, 12, 31, 0.95));
+    border: 1px solid rgba(165, 94, 234, 0.8);
+    color: #f3e8ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    font-size: 0.58rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    word-break: keep-all;
+    overflow: hidden;
+    box-shadow: 0 0 14px rgba(165, 94, 234, 0.35);
+}
+
+.graveyard-top-name {
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.graveyard-stack-count {
+    position: absolute;
+    right: 3px;
+    bottom: 3px;
+    min-width: 17px;
+    height: 17px;
+    border: 1px solid rgba(231, 211, 255, 0.72);
+    border-radius: 50%;
+    background: #241133;
+    color: #f5eaff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.52rem;
+}
+
+.graveyard-viewer {
+    position: fixed;
+    inset: 0;
+    z-index: 2500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(1, 4, 10, 0.78);
+    opacity: 0;
+    transition: opacity 0.18s ease;
+}
+
+.graveyard-viewer[hidden] {
+    display: none !important;
+}
+
+.graveyard-viewer.show {
+    opacity: 1;
+}
+
+.graveyard-dialog {
+    width: min(520px, calc(100vw - 32px));
+    max-height: min(620px, calc(100vh - 48px));
+    border: 1px solid #8f5db8;
+    border-radius: 6px;
+    background: linear-gradient(160deg, #1d1428 0%, #0a0d17 48%, #05070c 100%);
+    box-shadow: 0 0 0 1px #352042, 0 0 34px rgba(165, 94, 234, 0.34), 0 24px 60px rgba(0, 0, 0, 0.72);
+    overflow: hidden;
+    transform: translateY(10px) scale(0.98);
+    transition: transform 0.18s ease;
+}
+
+.graveyard-viewer.show .graveyard-dialog {
+    transform: translateY(0) scale(1);
+}
+
+.graveyard-dialog-header {
+    min-height: 65px;
+    padding: 12px 14px 11px 16px;
+    border-bottom: 1px solid rgba(165, 94, 234, 0.42);
+    background: rgba(24, 13, 35, 0.88);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.graveyard-dialog-kicker {
+    color: #8f76a8;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.48rem;
+    letter-spacing: 1.2px;
+}
+
+.graveyard-dialog h2 {
+    margin-top: 3px;
+    color: #ead8ff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.05rem;
+    letter-spacing: 2px;
+}
+
+.graveyard-dialog-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.graveyard-dialog-count {
+    color: #b895d8;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.58rem;
+}
+
+.graveyard-close-button {
+    appearance: none;
+    width: 30px;
+    height: 30px;
+    border: 1px solid rgba(184, 149, 216, 0.48);
+    border-radius: 3px;
+    background: #110b19;
+    color: #ead8ff;
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.graveyard-close-button:hover {
+    border-color: #d3a9ff;
+    box-shadow: 0 0 10px rgba(165, 94, 234, 0.42);
+}
+
+.graveyard-card-list {
+    max-height: min(510px, calc(100vh - 145px));
+    padding: 8px;
+    overflow-y: auto;
+}
+
+.graveyard-list-row {
+    min-height: 42px;
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) 72px;
+    align-items: center;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.13);
+    border-left: 3px solid #64748b;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.graveyard-list-row + .graveyard-list-row {
+    margin-top: 4px;
+}
+
+.graveyard-list-row.monster {
+    border-left-color: #d37e28;
+}
+
+.graveyard-list-row.spell {
+    border-left-color: #1dd1a1;
+}
+
+.graveyard-list-row.trap {
+    border-left-color: #e056fd;
+}
+
+.graveyard-list-order {
+    color: #68788e;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.55rem;
+    text-align: center;
+}
+
+.graveyard-list-name {
+    min-width: 0;
+    padding: 0 8px;
+    color: #edf2f7;
+    font-size: 0.78rem;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.graveyard-list-type {
+    color: #8998ad;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.5rem;
+    letter-spacing: 0.7px;
+    text-align: center;
+}
+
+.graveyard-empty {
+    min-height: 180px;
+    color: #766983;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.82rem;
+}
+
+@keyframes card-summon {
+    0% {
+        transform: scale(1.4);
+        opacity: 0.2;
+        filter: brightness(2);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+        filter: brightness(1);
+    }
+}
+
+/* 守備表示（横向き） */
+.placed-card.defense-mode {
+    transform: rotate(90deg) scale(0.92);
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.8);
+}
+
+.placed-card.defense-mode:hover {
+    transform: rotate(90deg) scale(0.98);
+}
+
+/* デュエルメッセージ通知バー */
+.duel-toast {
+    position: fixed;
+    top: 20px;
+    background: rgba(13, 22, 38, 0.95);
+    border: 1px solid #00d2ff;
+    color: #00d2ff;
+    padding: 8px 24px;
+    border-radius: 30px;
+    font-family: 'Orbitron', 'Noto Sans JP', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+    z-index: 1000;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+.duel-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.spell-action-panel {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 10px);
+    display: grid;
+    grid-template-columns: repeat(2, 68px);
+    gap: 6px;
+    width: max-content;
+    padding: 19px 7px 7px;
+    border: 2px solid #c9a34b;
+    border-radius: 4px;
+    background: linear-gradient(145deg, #18221f 0%, #07110f 52%, #030706 100%);
+    box-shadow:
+        0 0 0 1px #3f2d0c,
+        0 0 20px rgba(29, 209, 161, 0.42),
+        inset 0 0 14px rgba(201, 163, 75, 0.12),
+        0 9px 18px rgba(0, 0, 0, 0.82);
+    z-index: 1200;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 8px) scale(0.92);
+    transform-origin: center bottom;
+    transition: opacity 0.16s ease, transform 0.16s ease;
+}
+
+.trap-action-panel {
+    grid-template-columns: 68px 74px;
+}
+
+.trap-action-panel .spell-action-button.set {
+    grid-column: 1 / -1;
+    width: 100%;
+}
+
+.spell-action-panel[hidden] {
+    display: none !important;
+}
+
+.spell-action-button[hidden] {
+    display: none !important;
+}
+
+.monster-position-panel.flip-mode .spell-action-button.attack {
+    grid-column: 1 / -1;
+    width: 100%;
+}
+
+.monster-position-panel.position-locked .spell-action-button {
+    opacity: 0.46;
+    filter: saturate(0.45);
+}
+
+.spell-action-panel::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -7px;
+    width: 11px;
+    height: 11px;
+    background: #07110f;
+    border-right: 2px solid #c9a34b;
+    border-bottom: 2px solid #c9a34b;
+    transform: translateX(-50%) rotate(45deg);
+}
+
+.spell-action-heading {
+    position: absolute;
+    top: 4px;
+    left: 8px;
+    right: 8px;
+    color: #e8d28a;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.43rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 1.3px;
+    text-align: center;
+    text-shadow: 0 0 7px rgba(232, 210, 138, 0.55);
+}
+
+.spell-action-panel.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, 0) scale(1);
+}
+
+.spell-action-button {
+    appearance: none;
+    border: 1px solid #9b7a32;
+    border-radius: 3px;
+    background: linear-gradient(180deg, #24342f 0%, #0a1512 48%, #030706 100%);
+    color: #f7efcf;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    font-family: 'Orbitron', 'Noto Sans JP', sans-serif;
+    padding: 7px 8px 6px;
+    cursor: pointer;
+    min-width: 68px;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04), inset 0 0 10px rgba(0, 0, 0, 0.65);
+    transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+}
+
+.spell-action-button .action-main {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.spell-action-button .action-sub {
+    font-size: 0.48rem;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    opacity: 0.68;
+    line-height: 1;
+}
+
+.effect-check-button {
+    appearance: none;
+    grid-column: 1 / -1;
+    justify-self: end;
+    height: 21px;
+    padding: 0 6px 0 4px;
+    border: 1px solid rgba(201, 163, 75, 0.5);
+    border-radius: 3px;
+    background: rgba(3, 7, 6, 0.82);
+    color: #c9b978;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.58rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.effect-check-button:hover {
+    color: #fff2bd;
+    border-color: #e8cf76;
+    box-shadow: 0 0 8px rgba(232, 207, 118, 0.35);
+}
+
+.effect-check-icon {
+    width: 13px;
+    height: 13px;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Georgia, serif;
+    font-size: 0.55rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.effect-detail-panel {
+    position: fixed;
+    z-index: 1800;
+    width: min(292px, calc(100vw - 24px));
+    max-height: min(360px, calc(100vh - 24px));
+    border: 1px solid #c9a34b;
+    border-left: 4px solid #c9a34b;
+    border-radius: 5px;
+    background: linear-gradient(150deg, rgba(24, 28, 34, 0.98), rgba(5, 8, 13, 0.99));
+    color: #e8edf5;
+    box-shadow: 0 0 0 1px #35270c, 0 15px 34px rgba(0, 0, 0, 0.78);
+    opacity: 0;
+    overflow: hidden;
+    transform: translateY(6px) scale(0.97);
+    transform-origin: bottom left;
+    transition: opacity 0.16s ease, transform 0.16s ease;
+}
+
+.effect-detail-panel[hidden] {
+    display: none !important;
+}
+
+.effect-detail-panel.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.effect-detail-panel.monster {
+    border-left-color: #d37e28;
+}
+
+.effect-detail-panel.spell {
+    border-left-color: #1dd1a1;
+}
+
+.effect-detail-panel.trap {
+    border-left-color: #e056fd;
+}
+
+.effect-detail-header {
+    min-height: 54px;
+    padding: 9px 10px 8px 12px;
+    border-bottom: 1px solid rgba(201, 163, 75, 0.28);
+    background: rgba(255, 255, 255, 0.025);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.effect-detail-kicker {
+    color: #9c8954;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.43rem;
+    letter-spacing: 1.1px;
+}
+
+.effect-detail-name {
+    margin-top: 3px;
+    color: #fff5cf;
+    font-size: 0.86rem;
+    line-height: 1.3;
+    letter-spacing: 0;
+}
+
+.effect-detail-close {
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    flex: 0 0 25px;
+    border: 1px solid rgba(201, 163, 75, 0.42);
+    border-radius: 3px;
+    background: #0b0d10;
+    color: #d9c98e;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.effect-detail-close:hover {
+    color: #ffffff;
+    border-color: #e8cf76;
+}
+
+.effect-detail-meta {
+    padding: 7px 12px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.13);
+    color: #8fa0b6;
+    font-family: 'Orbitron', 'Noto Sans JP', sans-serif;
+    font-size: 0.5rem;
+    line-height: 1.45;
+}
+
+.effect-detail-text {
+    max-height: 242px;
+    padding: 11px 12px 13px;
+    color: #dce4ee;
+    font-size: 0.72rem;
+    line-height: 1.75;
+    letter-spacing: 0;
+    overflow-y: auto;
+}
+
+.spell-action-button.activate {
+    border-color: #36d9b0;
+    box-shadow: inset 0 0 10px rgba(29, 209, 161, 0.18);
+}
+
+.spell-action-button.summon {
+    border-color: #e4b64f;
+    box-shadow: inset 0 0 10px rgba(228, 182, 79, 0.2);
+}
+
+.spell-action-button.attack {
+    border-color: #ef6b55;
+    box-shadow: inset 0 0 10px rgba(239, 107, 85, 0.18);
+}
+
+.spell-action-button.defense {
+    border-color: #5caeff;
+    box-shadow: inset 0 0 10px rgba(92, 174, 255, 0.18);
+}
+
+.spell-action-button.set {
+    border-color: #b88ee8;
+    box-shadow: inset 0 0 10px rgba(184, 142, 232, 0.16);
+}
+
+.spell-action-button:hover {
+    transform: translateY(-1px);
+    color: #ffffff;
+}
+
+.spell-action-button.activate:hover {
+    border-color: #1dd1a1;
+    background: linear-gradient(180deg, #146b59 0%, #0a2e28 52%, #04100e 100%);
+    box-shadow: 0 0 13px rgba(29, 209, 161, 0.65), inset 0 0 12px rgba(29, 209, 161, 0.18);
+}
+
+.spell-action-button.summon:hover {
+    border-color: #ffd66e;
+    background: linear-gradient(180deg, #704813 0%, #352006 52%, #120a02 100%);
+    box-shadow: 0 0 13px rgba(255, 190, 65, 0.62), inset 0 0 12px rgba(255, 214, 110, 0.16);
+}
+
+.spell-action-button.attack:hover {
+    border-color: #ff8b78;
+    background: linear-gradient(180deg, #702519 0%, #35100b 52%, #130503 100%);
+    box-shadow: 0 0 13px rgba(239, 107, 85, 0.62), inset 0 0 12px rgba(255, 139, 120, 0.15);
+}
+
+.spell-action-button.defense:hover {
+    border-color: #8bc5ff;
+    background: linear-gradient(180deg, #174b76 0%, #0a243b 52%, #030d14 100%);
+    box-shadow: 0 0 13px rgba(92, 174, 255, 0.62), inset 0 0 12px rgba(139, 197, 255, 0.15);
+}
+
+.spell-action-button.set:hover {
+    border-color: #d4b1ff;
+    background: linear-gradient(180deg, #51306f 0%, #261534 52%, #0e0713 100%);
+    box-shadow: 0 0 13px rgba(184, 142, 232, 0.58), inset 0 0 12px rgba(184, 142, 232, 0.16);
+}
