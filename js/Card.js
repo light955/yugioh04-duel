@@ -1,15 +1,20 @@
 export class Card {
-    constructor(element, cardData = {}) {
+    constructor(element, cardData) {
         this.element = element;
         this.faceHtml = element.innerHTML;
-        this.name = cardData.name || element.querySelector(".card-header-mini span")?.textContent || "カード";
+        this.id = cardData.id || "";
+        this.name = cardData.name || "カード";
         this.description = cardData.description || "効果テキストは登録されていません。";
         this.subTypes = cardData.subTypes || [];
+        this.isToken = Boolean(cardData.isToken || this.subTypes.includes("トークン"));
+        this.cannotBeTributedForAdvanceSummon = Boolean(cardData.cannotBeTributedForAdvanceSummon);
         this.attribute = cardData.attribute || "";
         this.race = cardData.race || "";
         this.level = Number(cardData.level) || 0;
         this.atk = Number(cardData.atk) || 0;
+        this.originalAtk = this.atk;
         this.def = Number(cardData.def) || 0;
+        this.originalDef = this.def;
         this.cannotNormalSummon = this.subTypes.includes("特殊召喚") || this.subTypes.includes("儀式");
         this.isMonster = element.classList.contains("monster-card");
         this.isSpell = element.classList.contains("spell-card");
@@ -17,7 +22,19 @@ export class Card {
         this.isDefenseMode = false;
         this.placedTurn = null;
         this.lastPositionChangeTurn = null;
+        this.positionLockedUntilTurn = null;
         this.lastAttackTurn = null;
+        this.lastDeclaredAttackTurn = null;
+        this.cannotAttackTurn = null;
+        this.extraAttackAvailableTurn = null;
+        this.extraAttackUsedTurn = null;
+        this.spellCounters = 0;
+        this.lastEffectTurn = null;
+        this.isEquipCard = false;
+        this.equippedTo = null;
+        this.wasProperlySummoned = false;
+        this.owner = "player";
+        this.controller = "player";
     }
 
     select() {
@@ -26,12 +43,6 @@ export class Card {
 
     deselect() {
         this.element.classList.remove("selected");
-    }
-
-    toggleBattlePosition(placedElement, onPositionChange) {
-        if (!this.isMonster) return;
-
-        this.setBattlePosition(placedElement, !this.isDefenseMode, onPositionChange);
     }
 
     setBattlePosition(placedElement, useDefenseMode, onPositionChange) {

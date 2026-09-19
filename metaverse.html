@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#05080d">
+    <title>Duel Metaverse</title>
+    <link rel="icon" href="data:,">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="stylesheet" href="metaverse.css?v=7">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.186.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+
+<body>
+    <main id="metaverse-root" class="metaverse-root">
+        <canvas id="metaverse-canvas" aria-label="3Dデュエルロビー"></canvas>
+
+        <section id="title-screen" class="title-screen" aria-labelledby="title-screen-heading">
+            <div class="title-screen-frame" aria-hidden="true"></div>
+            <div class="title-screen-content">
+                <span class="title-screen-code">NEXUS // ONLINE DUEL NETWORK</span>
+                <h1 id="title-screen-heading">DUEL<br>METAVERSE</h1>
+                <p class="title-screen-subtitle">ENTER THE WORLD OF DUELISTS</p>
+
+                <form id="player-name-form" class="player-name-form" novalidate>
+                    <label for="player-name-input">PLAYER NAME</label>
+                    <div class="player-name-controls">
+                        <input id="player-name-input" name="playerName" type="text" maxlength="16"
+                            autocomplete="nickname" placeholder="名前を入力" aria-describedby="player-name-message">
+                        <button type="submit">ENTER WORLD</button>
+                    </div>
+                    <p id="player-name-message" class="player-name-message" aria-live="polite">1〜16文字で入力してください</p>
+                </form>
+            </div>
+            <span class="title-screen-version">NETWORK BUILD // 0.2</span>
+        </section>
+
+        <header class="world-header">
+            <div class="world-brand">
+                <span class="world-brand-code">NEXUS // 01</span>
+                <h1>DUEL METAVERSE</h1>
+            </div>
+            <div class="world-actions">
+                <div class="world-wallet" aria-live="polite">
+                    <span>DP <strong id="world-dp">2000</strong></span>
+                    <span>CARDS <strong id="world-owned-cards">0</strong></span>
+                </div>
+                <a class="deck-builder-link" href="deck-builder.html">DECK EDITOR</a>
+                <a class="duel-field-link" href="index.html">DUEL FIELD</a>
+            </div>
+        </header>
+
+        <div id="world-online-status" class="world-online-status" data-state="connecting" aria-live="polite">
+            <span class="world-online-light" aria-hidden="true"></span>
+            <div>
+                <strong id="world-online-state">CONNECTING</strong>
+                <small id="world-player-name">---</small>
+            </div>
+            <span class="world-online-count"><b id="world-online-count">0</b> USERS</span>
+        </div>
+
+        <div class="world-status" aria-live="polite">
+            <span class="world-status-light" aria-hidden="true"></span>
+            <span id="world-status-text">INITIALIZING WORLD</span>
+        </div>
+
+        <div class="world-sector" aria-hidden="true">
+            <span>SECTOR</span>
+            <strong>00</strong>
+        </div>
+
+        <div id="world-loading" class="world-loading">
+            <span class="world-loading-mark" aria-hidden="true"></span>
+            <span>CONNECTING</span>
+        </div>
+
+        <div id="world-error" class="world-error" role="alert" hidden>
+            3D WORLD UNAVAILABLE
+        </div>
+
+        <div id="pack-shop-overlay" class="pack-shop-overlay" hidden>
+            <section class="pack-shop-panel" role="dialog" aria-modal="true" aria-labelledby="pack-shop-title">
+                <header class="pack-shop-header">
+                    <div>
+                        <span id="pack-shop-code" class="pack-shop-code">DUEL SHOP // CUSTOMER SERVICE</span>
+                        <h2 id="pack-shop-title">CARD PACKS</h2>
+                    </div>
+                    <button id="pack-shop-close" class="pack-shop-close" type="button" title="閉じる" aria-label="閉じる">×</button>
+                </header>
+
+                <div id="shopkeeper-dialogue" class="shopkeeper-dialogue" hidden>
+                    <div class="shopkeeper-portrait" aria-hidden="true">
+                        <span class="shopkeeper-portrait-head"></span>
+                        <span class="shopkeeper-portrait-visor"></span>
+                    </div>
+                    <div class="shopkeeper-dialogue-body">
+                        <strong>SHOP MASTER</strong>
+                        <p id="shopkeeper-dialogue-text">いらっしゃいませ。カードパックをお探しですか？</p>
+                        <button id="shopkeeper-dialogue-control" class="shopkeeper-dialogue-control" type="button"
+                            data-mode="next" title="次の会話" aria-label="次の会話">
+                            <span class="shopkeeper-dialogue-control-icon" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="pack-shop-products" class="pack-shop-products" hidden>
+                    <article class="pack-product" data-pack="monster">
+                        <span class="pack-product-mark" aria-hidden="true"></span>
+                        <h3>MONSTER ASSAULT</h3>
+                        <p>MONSTER COLLECTION</p>
+                        <dl><dt>CONTENTS</dt><dd>5 CARDS</dd><dt>PRICE</dt><dd>300 DP</dd></dl>
+                        <button type="button" data-buy-pack="monster" disabled>BUY 300 DP</button>
+                    </article>
+                    <article class="pack-product" data-pack="tactics">
+                        <span class="pack-product-mark" aria-hidden="true"></span>
+                        <h3>TACTICAL FORCE</h3>
+                        <p>SPELL &amp; TRAP COLLECTION</p>
+                        <dl><dt>CONTENTS</dt><dd>5 CARDS</dd><dt>PRICE</dt><dd>300 DP</dd></dl>
+                        <button type="button" data-buy-pack="tactics" disabled>BUY 300 DP</button>
+                    </article>
+                    <article class="pack-product" data-pack="chaos">
+                        <span class="pack-product-mark" aria-hidden="true"></span>
+                        <h3>CHAOS LEGENDS</h3>
+                        <p>RARE CARD GUARANTEED</p>
+                        <dl><dt>CONTENTS</dt><dd>5 CARDS</dd><dt>PRICE</dt><dd>500 DP</dd></dl>
+                        <button type="button" data-buy-pack="chaos" disabled>BUY 500 DP</button>
+                    </article>
+                </div>
+
+                <div id="pack-purchase-confirmation" class="pack-purchase-confirmation" data-pack="monster" hidden>
+                    <span class="pack-confirmation-code">PURCHASE CONFIRMATION</span>
+                    <div class="pack-confirmation-content">
+                        <span class="pack-confirmation-mark" aria-hidden="true"></span>
+                        <div class="pack-confirmation-details">
+                            <h3 id="pack-confirmation-name">MONSTER ASSAULT</h3>
+                            <p><strong><span id="pack-confirmation-price">300</span> DP</strong>で購入しますか？</p>
+                            <span class="pack-confirmation-balance">所持DP <b id="pack-confirmation-dp">0</b> DP</span>
+                        </div>
+                    </div>
+                    <div class="pack-confirmation-actions">
+                        <button id="pack-purchase-cancel" type="button">やめる</button>
+                        <button id="pack-purchase-confirm" type="button">購入する</button>
+                    </div>
+                </div>
+
+                <div id="pack-open-result" class="pack-open-result" hidden>
+                    <div class="pack-result-heading">
+                        <span>PACK OPEN RESULT</span>
+                        <button id="pack-result-back" type="button">BACK</button>
+                    </div>
+                    <div id="pack-result-cards" class="pack-result-cards"></div>
+                </div>
+                <p id="pack-shop-message" class="pack-shop-message" aria-live="polite"></p>
+            </section>
+        </div>
+    </main>
+
+    <script type="module" src="js/MetaverseApp.js?v=19"></script>
+</body>
+
+</html>

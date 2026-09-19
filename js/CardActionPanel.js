@@ -119,7 +119,8 @@ export class CardActionPanel {
             heading: "BATTLE POSITION",
             actions: [
                 { value: "attack", label: "攻撃表示", subLabel: "ATTACK", className: "attack", dataAttribute: "position" },
-                { value: "defense", label: "守備表示", subLabel: "DEFENSE", className: "defense", dataAttribute: "position" }
+                { value: "defense", label: "守備表示", subLabel: "DEFENSE", className: "defense", dataAttribute: "position" },
+                { value: "effect", label: "効果発動", subLabel: "ACTIVATE", className: "activate-monster-effect", dataAttribute: "position" }
             ],
             ...callbacks
         });

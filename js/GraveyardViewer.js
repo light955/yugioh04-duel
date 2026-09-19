@@ -1,7 +1,24 @@
 export class GraveyardViewer {
-    constructor({ getCards, onBeforeOpen } = {}) {
+    constructor({
+        getCards,
+        onBeforeOpen,
+        graveyardSelector = ".you-field .zone-graveyard",
+        listButtonSelector = "#graveyard-list-button",
+        kicker = "PLAYER CARD ARCHIVE",
+        title = "GRAVEYARD",
+        titleId = "player-graveyard-dialog-title",
+        emptyMessage = "墓地にカードはありません",
+        variant = "player"
+    } = {}) {
         this.getCards = getCards || (() => []);
         this.onBeforeOpen = onBeforeOpen;
+        this.graveyardSelector = graveyardSelector;
+        this.listButtonSelector = listButtonSelector;
+        this.kicker = kicker;
+        this.title = title;
+        this.titleId = titleId;
+        this.emptyMessage = emptyMessage;
+        this.variant = variant;
         this.element = this.createElement();
         this.listElement = this.element.querySelector(".graveyard-card-list");
         this.countElement = this.element.querySelector(".graveyard-dialog-count");
@@ -12,18 +29,18 @@ export class GraveyardViewer {
 
     createElement() {
         const viewer = document.createElement("div");
-        viewer.className = "graveyard-viewer";
+        viewer.className = `graveyard-viewer ${this.variant}-graveyard-viewer`;
         viewer.hidden = true;
         viewer.innerHTML = `
-            <section class="graveyard-dialog" role="dialog" aria-modal="true" aria-labelledby="graveyard-dialog-title">
+            <section class="graveyard-dialog" role="dialog" aria-modal="true" aria-labelledby="${this.titleId}">
                 <header class="graveyard-dialog-header">
                     <div>
-                        <span class="graveyard-dialog-kicker">PLAYER CARD ARCHIVE</span>
-                        <h2 id="graveyard-dialog-title">GRAVEYARD</h2>
+                        <span class="graveyard-dialog-kicker">${this.kicker}</span>
+                        <h2 id="${this.titleId}">${this.title}</h2>
                     </div>
                     <div class="graveyard-dialog-actions">
                         <span class="graveyard-dialog-count">0 CARDS</span>
-                        <button class="graveyard-close-button" type="button" aria-label="墓地一覧を閉じる" title="閉じる">×</button>
+                        <button class="graveyard-close-button" type="button" aria-label="${this.title}を閉じる" title="閉じる">×</button>
                     </div>
                 </header>
                 <div class="graveyard-card-list"></div>
@@ -33,8 +50,10 @@ export class GraveyardViewer {
     }
 
     bindEvents() {
-        const graveyardZone = document.querySelector(".you-field .zone-graveyard");
-        const listButton = document.getElementById("graveyard-list-button");
+        const graveyardZone = document.querySelector(this.graveyardSelector);
+        const listButton = this.listButtonSelector
+            ? document.querySelector(this.listButtonSelector)
+            : null;
 
         const openViewer = (event) => {
             event.stopPropagation();
@@ -85,7 +104,7 @@ export class GraveyardViewer {
         if (cards.length === 0) {
             const emptyMessage = document.createElement("div");
             emptyMessage.className = "graveyard-empty";
-            emptyMessage.textContent = "墓地にカードはありません";
+            emptyMessage.textContent = this.emptyMessage;
             this.listElement.appendChild(emptyMessage);
             return;
         }
@@ -113,27 +132,4 @@ export class GraveyardViewer {
         });
     }
 
-    showTopCard(graveyardZone, card, count) {
-        if (graveyardZone.originalContent) {
-            graveyardZone.originalContent.style.display = "none";
-        }
-
-        graveyardZone.element.querySelector(".graveyard-card")?.remove();
-
-        const cardElement = document.createElement("div");
-        cardElement.className = "graveyard-card";
-        cardElement.title = `墓地: ${card.name}`;
-
-        const cardName = document.createElement("span");
-        cardName.className = "graveyard-top-name";
-        cardName.textContent = card.name;
-
-        const stackCount = document.createElement("span");
-        stackCount.className = "graveyard-stack-count";
-        stackCount.textContent = count;
-
-        cardElement.append(cardName, stackCount);
-        graveyardZone.element.appendChild(cardElement);
-        graveyardZone.element.classList.add("occupied");
-    }
 }

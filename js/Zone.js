@@ -64,14 +64,10 @@ export class Zone {
             }
         }
 
-        if (card.isMonster) {
+        if (card.isMonster && options.onMonsterClick) {
             placedElement.addEventListener("click", (event) => {
                 event.stopPropagation();
-                if (options.onMonsterClick) {
-                    options.onMonsterClick(this, card, placedElement, onPositionChange);
-                } else if (!options.faceDown) {
-                    card.toggleBattlePosition(placedElement, onPositionChange);
-                }
+                options.onMonsterClick(this, card, placedElement, onPositionChange);
             });
         }
 

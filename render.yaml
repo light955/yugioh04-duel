@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: duel-metaverse-online
+    runtime: node
+    region: singapore
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeployTrigger: commit

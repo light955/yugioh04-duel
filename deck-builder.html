@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#070a0f">
+    <title>Deck Editor</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="deck-builder.css?v=3">
+</head>
+
+<body>
+    <header class="editor-header">
+        <div class="editor-brand">
+            <span>NEXUS // CARD DATABASE</span>
+            <h1>DECK EDITOR</h1>
+        </div>
+        <nav class="editor-navigation" aria-label="画面移動">
+            <a href="metaverse.html">METAVERSE</a>
+            <a href="index.html">DUEL FIELD</a>
+        </nav>
+    </header>
+
+    <main class="editor-main">
+        <section class="editor-toolbar" aria-label="カード検索と絞り込み">
+            <label class="search-control">
+                <span>SEARCH</span>
+                <input id="card-search" type="search" placeholder="カード名・種族・効果" autocomplete="off">
+            </label>
+            <div class="type-filter" role="group" aria-label="カード種類">
+                <button class="active" type="button" data-card-filter="all" aria-pressed="true">ALL</button>
+                <button type="button" data-card-filter="monster" aria-pressed="false">MONSTER</button>
+                <button type="button" data-card-filter="spell" aria-pressed="false">SPELL</button>
+                <button type="button" data-card-filter="trap" aria-pressed="false">TRAP</button>
+            </div>
+            <label class="sort-control">
+                <span>SORT</span>
+                <select id="card-sort">
+                    <option value="id">カード番号</option>
+                    <option value="name">カード名</option>
+                    <option value="type">カード種類</option>
+                    <option value="atk">攻撃力</option>
+                </select>
+            </label>
+        </section>
+
+        <div class="mobile-view-switcher" role="group" aria-label="編集する画面">
+            <button id="show-collection-view" class="active" type="button" data-editor-view="collection"
+                aria-pressed="true">CARD LIST</button>
+            <button id="show-deck-view" type="button" data-editor-view="deck" aria-pressed="false">
+                MAIN DECK <span id="mobile-deck-count">40</span>
+            </button>
+        </div>
+
+        <section id="selected-card-detail" class="selected-card-detail" data-card-type="monster">
+            <div class="detail-card-visual" aria-hidden="true">
+                <span id="detail-card-symbol">M</span>
+            </div>
+            <div class="detail-card-summary">
+                <span id="detail-card-id" class="detail-card-id">04-001</span>
+                <h2 id="detail-card-name">CARD DATA</h2>
+                <p id="detail-card-meta" class="detail-card-meta">MONSTER</p>
+            </div>
+            <p id="detail-card-description" class="detail-card-description">カードを選択すると効果を確認できます。</p>
+            <div class="detail-card-counts">
+                <span>OWNED <strong id="detail-owned-count">0</strong></span>
+                <span>DECK <strong id="detail-deck-count">0</strong></span>
+                <button id="detail-add-card" type="button" title="選択カードをデッキへ追加" aria-label="選択カードをデッキへ追加">＋</button>
+            </div>
+        </section>
+
+        <div class="editor-workspace">
+            <section class="collection-panel" aria-labelledby="collection-title">
+                <header class="panel-heading">
+                    <div>
+                        <span>YOUR COLLECTION</span>
+                        <h2 id="collection-title">CARD LIST</h2>
+                    </div>
+                    <strong id="collection-result-count">0 CARDS</strong>
+                </header>
+                <div id="card-collection" class="card-collection"></div>
+                <p id="collection-empty" class="collection-empty" hidden>条件に一致するカードがありません。</p>
+            </section>
+
+            <aside class="deck-panel" aria-labelledby="deck-title">
+                <header class="panel-heading deck-heading">
+                    <div>
+                        <span>ACTIVE BUILD</span>
+                        <h2 id="deck-title">MAIN DECK</h2>
+                    </div>
+                    <div id="deck-count" class="deck-count" aria-live="polite">40 / 40</div>
+                </header>
+
+                <div class="deck-breakdown" aria-label="デッキ内訳">
+                    <span class="monster">MONSTER <strong id="deck-monster-count">0</strong></span>
+                    <span class="spell">SPELL <strong id="deck-spell-count">0</strong></span>
+                    <span class="trap">TRAP <strong id="deck-trap-count">0</strong></span>
+                </div>
+
+                <div id="deck-card-list" class="deck-card-list"></div>
+
+                <footer class="deck-actions">
+                    <p id="deck-save-status" aria-live="polite">40枚のデッキが使用できます。</p>
+                    <div>
+                        <button id="reset-deck" class="secondary-action" type="button">初期デッキ</button>
+                        <button id="save-deck" class="primary-action" type="button">デッキ保存</button>
+                    </div>
+                </footer>
+            </aside>
+        </div>
+    </main>
+
+    <script type="module" src="js/DeckBuilderApp.js?v=3"></script>
+</body>
+
+</html>

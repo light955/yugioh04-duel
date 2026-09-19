@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>遊戯王 デュエルフィールド</title>
-    <link rel="stylesheet" href="style.css?v=12">
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="style.css?v=29">
 </head>
 
 <body>
@@ -19,14 +20,9 @@
         <section class="hand-container opponent-hand">
             <div class="hand-title">
                 <span>OPPONENT'S HAND</span>
-                <span style="color: #ff3366; font-weight: bold;">(5)</span>
+                <span style="color: #ff3366; font-weight: bold;">(0枚)</span>
             </div>
             <div class="hand-cards">
-                <div class="card-back"></div>
-                <div class="card-back"></div>
-                <div class="card-back"></div>
-                <div class="card-back"></div>
-                <div class="card-back"></div>
             </div>
         </section>
 
@@ -34,6 +30,28 @@
         <div class="player-field opponent-field">
             <div class="player-info opponent">
                 <span class="player-label">OPPONENT</span>
+                <div class="opponent-test-controls">
+                    <div class="test-position-selector" role="group" aria-label="テストモンスターの表示形式">
+                        <button class="test-position-button active" type="button" data-test-position="attack"
+                            aria-pressed="true" title="表側攻撃表示" disabled>ATK</button>
+                        <button class="test-position-button" type="button" data-test-position="defense"
+                            aria-pressed="false" title="表側守備表示" disabled>DEF</button>
+                        <button class="test-position-button" type="button" data-test-position="set"
+                            aria-pressed="false" title="裏側守備表示" disabled>SET</button>
+                    </div>
+                    <button id="test-opponent-monster-button" class="test-opponent-button" type="button"
+                        title="テスト用モンスターを相手フィールドに配置" disabled>
+                        <span class="test-opponent-button-icon" aria-hidden="true">＋</span>
+                        <span>TEST MONSTER</span>
+                    </button>
+                    <button id="toggle-opponent-reveal"
+                        class="test-opponent-button opponent-reveal-button"
+                        type="button" aria-pressed="false"
+                        title="相手の手札と伏せカードをテスト公開">
+                        <span class="opponent-reveal-icon" aria-hidden="true">EYE</span>
+                        <span class="opponent-reveal-label">REVEAL</span>
+                    </button>
+                </div>
                 <span id="opponent-lp" class="lp-tag">LP 8000</span>
             </div>
             <table class="duel-table">
@@ -278,7 +296,8 @@
                     <span class="count-label">FIELD</span>
                     <strong id="field-card-count">0</strong>
                 </span>
-                <button id="graveyard-list-button" class="card-count-item graveyard-count-button" type="button" title="墓地のカード一覧">
+                <button id="graveyard-list-button" class="card-count-item graveyard-count-button" type="button"
+                    title="墓地のカード一覧">
                     <span class="count-label">GY</span>
                     <strong id="graveyard-card-count">0</strong>
                 </button>
@@ -291,11 +310,12 @@
                 <span>YOUR HAND</span>
                 <span style="color: #00d2ff; font-weight: bold;">(5枚)</span>
             </div>
-            <div class="hand-cards"></div>
+            <div class="hand-cards">
+            </div>
         </section>
     </main>
 
-    <script type="module" src="main.js?v=24">
+    <script type="module" src="main.js?v=87">
     </script>
 </body>
 

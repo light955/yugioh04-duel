@@ -1,49 +1,53 @@
-import { Card } from "./Card.js?v=1";
+import { Card } from "./Card.js?v=10";
 
 export class Hand {
-    constructor(containerSelector, onCardClick) {
+    constructor(containerSelector) {
         this.container = document.querySelector(containerSelector);
         this.countTag = this.container ? this.container.querySelector(".hand-title span:last-child") : null;
         this.cardsContainer = this.container ? this.container.querySelector(".hand-cards") : null;
         this.cards = [];
-        this.initCards(onCardClick);
-    }
-
-    initCards(onCardClick) {
-        if (!this.container) return;
-
-        const cardElements = this.container.querySelectorAll(".hand-card");
-        cardElements.forEach(element => {
-            const card = new Card(element);
-            this.cards.push(card);
-
-            element.addEventListener("click", (event) => {
-                event.stopPropagation();
-                if (onCardClick) onCardClick(card);
-            });
-        });
-
+        this.boundElements = new WeakSet();
         this.updateCount();
     }
 
     addCardFromData(cardData, onCardClick) {
         if (!this.cardsContainer || !cardData) return;
 
+        const card = this.createCard(cardData);
+        if (!card) return;
+
+        return this.addCard(card, onCardClick);
+    }
+
+    addCard(card, onCardClick) {
+        if (!this.cardsContainer || !card || this.cards.includes(card)) return null;
+
+        const { element } = card;
+        this.cards.push(card);
+
+        if (!this.boundElements.has(element)) {
+            element.addEventListener("click", (event) => {
+                event.stopPropagation();
+                if (onCardClick) onCardClick(card);
+            });
+            this.boundElements.add(element);
+        }
+
+        element.classList.remove("selected");
+        this.cardsContainer.appendChild(element);
+        this.updateCount();
+        return card;
+    }
+
+    createCard(cardData) {
+        if (!cardData) return null;
+
         const element = document.createElement("div");
         element.className = `hand-card ${this.getCardClass(cardData)}`;
         element.title = cardData.name;
         element.innerHTML = this.createCardHtml(cardData);
 
-        const card = new Card(element, cardData);
-        this.cards.push(card);
-
-        element.addEventListener("click", (event) => {
-            event.stopPropagation();
-            if (onCardClick) onCardClick(card);
-        });
-
-        this.cardsContainer.appendChild(element);
-        this.updateCount();
+        return new Card(element, cardData);
     }
 
     clear() {

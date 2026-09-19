@@ -1,0 +1,503 @@
+[
+    {
+        "id": "OP-001",
+        "name": "墓守の偵察者",
+        "cardType": "monster",
+        "frame": "effect",
+        "attribute": "DARK",
+        "race": "魔法使い族",
+        "level": 4,
+        "atk": 1200,
+        "def": 2000,
+        "subTypes": [
+            "効果",
+            "リバース"
+        ],
+        "description": "リバースした時、攻撃力1500以下の「墓守」モンスター1体をデッキから特殊召喚できる。"
+    },
+    {
+        "id": "OP-002",
+        "name": "墓守の偵察者",
+        "cardType": "monster",
+        "frame": "effect",
+        "attribute": "DARK",
+        "race": "魔法使い族",
+        "level": 4,
+        "atk": 1200,
+        "def": 2000,
+        "subTypes": [
+            "効果",
+            "リバース"
+        ],
+        "description": "リバースした時、攻撃力1500以下の「墓守」モンスター1体をデッキから特殊召喚できる。"
+    },
+    {
+        "id": "OP-003",
+        "name": "墓守の偵察者",
+        "cardType": "monster",
+        "frame": "effect",
+        "attribute": "DARK",
+        "race": "魔法使い族",
+        "level": 4,
+        "atk": 1200,
+        "def": 2000,
+        "subTypes": [
+            "効果",
+            "リバース"
+        ],
+        "description": "リバースした時、攻撃力1500以下の「墓守」モンスター1体をデッキから特殊召喚できる。"
+    },
+    {
+        "id": "OP-004",
+        "name": "墓守の長槍兵",
+        "cardType": "monster",
+        "frame": "effect",
+        "attribute": "DARK",
+        "race": "魔法使い族",
+        "level": 4,
+        "atk": 1500,
+        "def": 1000,
+        "subTypes": [
+            "効果"
+        ],
+        "description": "守備表示モンスターを攻撃した時、攻撃力が守備力を超えた分だけ戦闘ダメージを与える。"
+    },
+    {
+        "id": "OP-005",
+        "name": "墓守の長槍兵",
+        "cardType": "monster",
+        "frame": "effect",
+        "attribute": "DARK",
+        "race": "魔法使い族",
+        "level": 4,
+        "atk": 1500,
+        "def": 1000,
+        "subTypes": [
+            "効果"
+        ],
+        "description": "守備表示モンスターを攻撃した時、攻撃力が守備力を超えた分だけ戦闘ダメージを与える。"
+    },
+    {
+        "id": "OP-006",
+        "name": "墓守の長槍兵",
+        "cardType": "monster",
+        "frame": "effect",
+        "attribute": "DARK",
+        "race": "魔法使い族",
+        "level": 4,
+        "atk": 1500,
+        "def": 1000,
+        "subTypes": [
+            "効果"
+        ],
+        "description": "守備表示モンスターを攻撃した時、攻撃力が守備力を超えた分だけ戦闘ダメージを与える。"
+    },
+    {
+        "id": "OP-007",
+        "name": "墓守の番兵",
+        "cardType": "monster",
+        "frame": "effect",
+        "attribute": "DARK",
+        "race": "魔法使い族",
+        "level": 4,
+        "atk": 1000,
+        "def": 1900,
+        "subTypes": [
+            "効果",
+            "リバース"
+        ],
+        "description": "リバースした時、相手フィールドのモンスター1体を手札に戻す。"
+    },
+    {
+        "id": "OP-008",
+        "name": "墓守の番兵",
+        "cardType": "monster",
+        "frame": "effect",
+        "attribute": "DARK",
+        "race": "魔法使い族",
+        "level": 4,
+        "atk": 1000,
+        "def": 1900,
+        "subTypes": [
+            "効果",
+            "リバース"
+        ],
+        "description": "リバースした時、相手フィールドのモンスター1体を手札に戻す。"
+    },
+    {
+        "id": "OP-009",
+        "name": "墓守の番兵",
+        "cardType": "monster",
+        "frame": "effect",
+        "attribute": "DARK",
+        "race": "魔法使い族",
+        "level": 4,
+        "atk": 1000,
+        "def": 1900,
+        "subTypes": [
+            "効果",
+            "リバース"
+        ],
+        "description": "リバースした時、相手フィールドのモンスター1体を手札に戻す。"
+    },
+    {
+        "id": "OP-010",
+        "name": "墓守の暗殺者",
+        "cardType": "monster",
+        "frame": "effect",
+        "attribute": "DARK",
+        "race": "魔法使い族",
+        "level": 4,
+        "atk": 1500,
+        "def": 1500,
+        "subTypes": [
+            "効果"
+        ],
+        "description": "ネクロバレーがある場合、攻撃宣言時に相手モンスターの表示形式を変更できる。"
+    },
+    {
+        "id": "OP-011",
+        "name": "墓守の暗殺者",
+        "cardType": "monster",
+        "frame": "effect",
+        "attribute": "DARK",
+        "race": "魔法使い族",
+        "level": 4,
+        "atk": 1500,
+        "def": 1500,
+        "subTypes": [
+            "効果"
+        ],
+        "description": "ネクロバレーがある場合、攻撃宣言時に相手モンスターの表示形式を変更できる。"
+    },
+    {
+        "id": "OP-012",
+        "name": "墓守の暗殺者",
+        "cardType": "monster",
+        "frame": "effect",
+        "attribute": "DARK",
+        "race": "魔法使い族",
+        "level": 4,
+        "atk": 1500,
+        "def": 1500,
+        "subTypes": [
+            "効果"
+        ],
+        "description": "ネクロバレーがある場合、攻撃宣言時に相手モンスターの表示形式を変更できる。"
+    },
+    {
+        "id": "OP-013",
+        "name": "墓守の長",
+        "cardType": "monster",
+        "frame": "effect",
+        "attribute": "DARK",
+        "race": "魔法使い族",
+        "level": 5,
+        "atk": 1900,
+        "def": 1200,
+        "subTypes": [
+            "効果"
+        ],
+        "description": "アドバンス召喚した時、墓地の「墓守」モンスター1体を特殊召喚できる。"
+    },
+    {
+        "id": "OP-014",
+        "name": "墓守の長",
+        "cardType": "monster",
+        "frame": "effect",
+        "attribute": "DARK",
+        "race": "魔法使い族",
+        "level": 5,
+        "atk": 1900,
+        "def": 1200,
+        "subTypes": [
+            "効果"
+        ],
+        "description": "アドバンス召喚した時、墓地の「墓守」モンスター1体を特殊召喚できる。"
+    },
+    {
+        "id": "OP-015",
+        "name": "墓守の呪術師",
+        "cardType": "monster",
+        "frame": "effect",
+        "attribute": "DARK",
+        "race": "魔法使い族",
+        "level": 3,
+        "atk": 800,
+        "def": 800,
+        "subTypes": [
+            "効果"
+        ],
+        "description": "召喚・反転召喚・特殊召喚した時、相手に500ダメージを与える。"
+    },
+    {
+        "id": "OP-016",
+        "name": "墓守の呪術師",
+        "cardType": "monster",
+        "frame": "effect",
+        "attribute": "DARK",
+        "race": "魔法使い族",
+        "level": 3,
+        "atk": 800,
+        "def": 800,
+        "subTypes": [
+            "効果"
+        ],
+        "description": "召喚・反転召喚・特殊召喚した時、相手に500ダメージを与える。"
+    },
+    {
+        "id": "OP-017",
+        "name": "墓守の従者",
+        "cardType": "monster",
+        "frame": "effect",
+        "attribute": "DARK",
+        "race": "魔法使い族",
+        "level": 3,
+        "atk": 700,
+        "def": 500,
+        "subTypes": [
+            "効果"
+        ],
+        "description": "このカードが与える戦闘ダメージは効果ダメージとして扱う。"
+    },
+    {
+        "id": "OP-018",
+        "name": "墓守の大筒持ち",
+        "cardType": "monster",
+        "frame": "effect",
+        "attribute": "DARK",
+        "race": "魔法使い族",
+        "level": 4,
+        "atk": 1400,
+        "def": 1200,
+        "subTypes": [
+            "効果"
+        ],
+        "description": "自分の「墓守」モンスター1体をリリースし、相手に700ダメージを与える。"
+    },
+    {
+        "id": "OP-019",
+        "name": "墓守の大筒持ち",
+        "cardType": "monster",
+        "frame": "effect",
+        "attribute": "DARK",
+        "race": "魔法使い族",
+        "level": 4,
+        "atk": 1400,
+        "def": 1200,
+        "subTypes": [
+            "効果"
+        ],
+        "description": "自分の「墓守」モンスター1体をリリースし、相手に700ダメージを与える。"
+    },
+    {
+        "id": "OP-020",
+        "name": "王家の眠る谷－ネクロバレー",
+        "cardType": "spell",
+        "frame": "spell",
+        "subTypes": [
+            "フィールド魔法"
+        ],
+        "description": "「墓守」モンスターを強化し、墓地に関係する効果を制限する。"
+    },
+    {
+        "id": "OP-021",
+        "name": "王家の眠る谷－ネクロバレー",
+        "cardType": "spell",
+        "frame": "spell",
+        "subTypes": [
+            "フィールド魔法"
+        ],
+        "description": "「墓守」モンスターを強化し、墓地に関係する効果を制限する。"
+    },
+    {
+        "id": "OP-022",
+        "name": "王家の眠る谷－ネクロバレー",
+        "cardType": "spell",
+        "frame": "spell",
+        "subTypes": [
+            "フィールド魔法"
+        ],
+        "description": "「墓守」モンスターを強化し、墓地に関係する効果を制限する。"
+    },
+    {
+        "id": "OP-023",
+        "name": "王家の生け贄",
+        "cardType": "spell",
+        "frame": "spell",
+        "subTypes": [
+            "通常魔法"
+        ],
+        "description": "ネクロバレーがある場合、お互いは手札のモンスターを全て捨てる。"
+    },
+    {
+        "id": "OP-024",
+        "name": "王家の生け贄",
+        "cardType": "spell",
+        "frame": "spell",
+        "subTypes": [
+            "通常魔法"
+        ],
+        "description": "ネクロバレーがある場合、お互いは手札のモンスターを全て捨てる。"
+    },
+    {
+        "id": "OP-025",
+        "name": "墓守の使い魔",
+        "cardType": "spell",
+        "frame": "spell",
+        "subTypes": [
+            "永続魔法"
+        ],
+        "description": "相手は攻撃宣言のたびにデッキの一番上のカードを墓地へ送る。"
+    },
+    {
+        "id": "OP-026",
+        "name": "墓守の使い魔",
+        "cardType": "spell",
+        "frame": "spell",
+        "subTypes": [
+            "永続魔法"
+        ],
+        "description": "相手は攻撃宣言のたびにデッキの一番上のカードを墓地へ送る。"
+    },
+    {
+        "id": "OP-027",
+        "name": "テラ・フォーミング",
+        "cardType": "spell",
+        "frame": "spell",
+        "subTypes": [
+            "通常魔法"
+        ],
+        "description": "デッキからフィールド魔法カード1枚を手札に加える。"
+    },
+    {
+        "id": "OP-028",
+        "name": "テラ・フォーミング",
+        "cardType": "spell",
+        "frame": "spell",
+        "subTypes": [
+            "通常魔法"
+        ],
+        "description": "デッキからフィールド魔法カード1枚を手札に加える。"
+    },
+    {
+        "id": "OP-029",
+        "name": "地砕き",
+        "cardType": "spell",
+        "frame": "spell",
+        "subTypes": [
+            "通常魔法"
+        ],
+        "description": "相手の表側モンスターのうち守備力が最も高い1体を破壊する。"
+    },
+    {
+        "id": "OP-030",
+        "name": "地砕き",
+        "cardType": "spell",
+        "frame": "spell",
+        "subTypes": [
+            "通常魔法"
+        ],
+        "description": "相手の表側モンスターのうち守備力が最も高い1体を破壊する。"
+    },
+    {
+        "id": "OP-031",
+        "name": "団結の力",
+        "cardType": "spell",
+        "frame": "spell",
+        "subTypes": [
+            "装備魔法"
+        ],
+        "description": "自分フィールドの表側モンスター1体につき、装備モンスターの攻撃力・守備力を800上げる。"
+    },
+    {
+        "id": "OP-032",
+        "name": "魔導師の力",
+        "cardType": "spell",
+        "frame": "spell",
+        "subTypes": [
+            "装備魔法"
+        ],
+        "description": "自分の魔法・罠カード1枚につき、装備モンスターの攻撃力・守備力を500上げる。"
+    },
+    {
+        "id": "OP-033",
+        "name": "降霊の儀式",
+        "cardType": "trap",
+        "frame": "trap",
+        "subTypes": [
+            "通常罠"
+        ],
+        "description": "墓地の「墓守」モンスター1体を特殊召喚する。ネクロバレーの影響を受けない。"
+    },
+    {
+        "id": "OP-034",
+        "name": "降霊の儀式",
+        "cardType": "trap",
+        "frame": "trap",
+        "subTypes": [
+            "通常罠"
+        ],
+        "description": "墓地の「墓守」モンスター1体を特殊召喚する。ネクロバレーの影響を受けない。"
+    },
+    {
+        "id": "OP-035",
+        "name": "魔法の筒",
+        "cardType": "trap",
+        "frame": "trap",
+        "subTypes": [
+            "通常罠"
+        ],
+        "description": "相手モンスターの攻撃を無効にし、その攻撃力分のダメージを相手に与える。"
+    },
+    {
+        "id": "OP-036",
+        "name": "魔法の筒",
+        "cardType": "trap",
+        "frame": "trap",
+        "subTypes": [
+            "通常罠"
+        ],
+        "description": "相手モンスターの攻撃を無効にし、その攻撃力分のダメージを相手に与える。"
+    },
+    {
+        "id": "OP-037",
+        "name": "万能地雷グレイモヤ",
+        "cardType": "trap",
+        "frame": "trap",
+        "subTypes": [
+            "通常罠"
+        ],
+        "description": "相手の攻撃宣言時、相手の攻撃表示モンスターのうち攻撃力が最も高い1体を破壊する。"
+    },
+    {
+        "id": "OP-038",
+        "name": "和睦の使者",
+        "cardType": "trap",
+        "frame": "trap",
+        "subTypes": [
+            "通常罠"
+        ],
+        "description": "このターン、自分のモンスターは戦闘で破壊されず、自分が受ける戦闘ダメージは0になる。"
+    },
+    {
+        "id": "OP-039",
+        "name": "砂塵の大竜巻",
+        "cardType": "trap",
+        "frame": "trap",
+        "subTypes": [
+            "通常罠"
+        ],
+        "description": "相手フィールドの魔法・罠カード1枚を破壊し、その後手札から魔法・罠カード1枚をセットできる。"
+    },
+    {
+        "id": "OP-040",
+        "name": "神の宣告",
+        "cardType": "trap",
+        "frame": "trap",
+        "subTypes": [
+            "カウンター罠"
+        ],
+        "description": "LPを半分払い、召喚や魔法・罠カードの発動を無効にして破壊する。"
+    }
+]
