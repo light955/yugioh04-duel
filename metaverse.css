@@ -247,7 +247,7 @@ body:not(.world-entered) .world-sector {
 
 .world-header {
     position: absolute;
-    z-index: 2;
+    z-index: 5;
     top: 0;
     left: 0;
     display: flex;
@@ -263,6 +263,200 @@ body:not(.world-entered) .world-sector {
     align-items: flex-start;
     gap: 10px;
     pointer-events: auto;
+}
+
+/* ===== WHISPER通知の追加部分 ===== */
+.world-whisper-notification {
+    position: relative;
+}
+
+.world-whisper-notification-button {
+    position: relative;
+    display: grid;
+    width: 39px;
+    height: 39px;
+    place-items: center;
+    border: 1px solid rgba(255, 93, 115, 0.48);
+    background: var(--world-panel);
+    cursor: pointer;
+}
+
+.world-whisper-notification-button:hover,
+.world-whisper-notification-button:focus-visible,
+.world-whisper-notification-button.has-unread {
+    border-color: #ff5d73;
+    outline: none;
+    background: rgba(45, 12, 22, 0.94);
+    box-shadow: inset 0 -2px 0 rgba(255, 93, 115, 0.68);
+}
+
+.world-whisper-notification-icon {
+    display: block;
+    font-family: "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+    font-size: 17px;
+    filter: grayscale(1);
+    transform-origin: 50% 12%;
+}
+
+.world-whisper-notification-button.has-unread .world-whisper-notification-icon {
+    filter: none;
+}
+
+.world-whisper-notification-button.is-ringing .world-whisper-notification-icon {
+    animation: whisper-bell-ring 650ms ease-in-out;
+}
+
+.world-whisper-notification-badge {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    display: grid;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    place-items: center;
+    border: 2px solid #05080d;
+    border-radius: 50%;
+    background: #ff5d73;
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 8px;
+    font-weight: 700;
+}
+
+.world-whisper-notification-panel {
+    position: absolute;
+    z-index: 8;
+    top: calc(100% + 10px);
+    right: 0;
+    width: min(350px, calc(100vw - 24px));
+    border: 1px solid rgba(255, 93, 115, 0.56);
+    background: rgba(4, 9, 15, 0.97);
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.48);
+}
+
+.world-whisper-notification-panel[hidden],
+.world-whisper-notification-badge[hidden],
+.world-whisper-notification-empty[hidden] {
+    display: none;
+}
+
+.world-whisper-notification-panel > header {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 93, 115, 0.24);
+}
+
+.world-whisper-notification-panel > header > div {
+    display: grid;
+    gap: 2px;
+    padding: 8px 11px;
+}
+
+.world-whisper-notification-panel > header span {
+    color: #8f6670;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 7px;
+}
+
+.world-whisper-notification-panel > header strong {
+    color: #ff7d90;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+}
+
+.world-whisper-notification-panel > header > button {
+    align-self: stretch;
+    width: 42px;
+    border: 0;
+    border-left: 1px solid rgba(255, 93, 115, 0.2);
+    background: transparent;
+    color: #9c727c;
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.world-whisper-notification-panel > header > button:hover,
+.world-whisper-notification-panel > header > button:focus-visible {
+    outline: none;
+    background: rgba(255, 93, 115, 0.1);
+    color: #ff9eac;
+}
+
+.world-whisper-notification-list {
+    max-height: 286px;
+    overflow-y: auto;
+    scrollbar-color: rgba(255, 93, 115, 0.4) transparent;
+}
+
+.world-whisper-notification-item {
+    display: grid;
+    width: 100%;
+    gap: 5px;
+    padding: 10px 12px;
+    border: 0;
+    border-bottom: 1px solid rgba(255, 93, 115, 0.13);
+    background: transparent;
+    color: #ff9eac;
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.world-whisper-notification-item:hover,
+.world-whisper-notification-item:focus-visible {
+    outline: none;
+    background: rgba(255, 93, 115, 0.09);
+    box-shadow: inset 3px 0 0 #ff5d73;
+}
+
+.world-whisper-notification-item > span:first-child {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.world-whisper-notification-item strong {
+    overflow: hidden;
+    color: #edf5f7;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.world-whisper-notification-item time {
+    flex: 0 0 auto;
+    color: #785d65;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 7px;
+}
+
+.world-whisper-notification-item > span:last-child {
+    overflow: hidden;
+    font-size: 12px;
+    line-height: 1.4;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.world-whisper-notification-empty {
+    margin: 0;
+    padding: 25px 12px;
+    color: #745d64;
+    font-size: 12px;
+    text-align: center;
+}
+
+@keyframes whisper-bell-ring {
+    0%, 100% { transform: rotate(0deg); }
+    20% { transform: rotate(16deg); }
+    40% { transform: rotate(-14deg); }
+    60% { transform: rotate(10deg); }
+    80% { transform: rotate(-7deg); }
 }
 
 /* ===== オンライン接続状態の追加部分 ===== */
@@ -352,6 +546,401 @@ body:not(.world-entered) .world-sector {
 
 .world-online-status[data-state="offline"] strong {
     color: #ff91a1;
+}
+
+/* ===== オンライン入退室通知の追加部分 ===== */
+.world-notifications {
+    position: absolute;
+    z-index: 4;
+    top: 126px;
+    left: clamp(18px, 3vw, 46px);
+    display: grid;
+    width: min(360px, calc(100% - 36px));
+    gap: 8px;
+    pointer-events: none;
+}
+
+.world-notification {
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr);
+    min-height: 48px;
+    align-items: center;
+    border: 1px solid rgba(89, 222, 232, 0.38);
+    background: rgba(5, 11, 17, 0.94);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+    opacity: 0;
+    transform: translateX(-14px);
+    transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.world-notification.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.world-notification[data-type="left"] {
+    border-color: rgba(130, 147, 159, 0.42);
+}
+
+.world-notification-mark {
+    display: grid;
+    height: 100%;
+    place-items: center;
+    border-right: 1px solid rgba(89, 222, 232, 0.24);
+    color: var(--world-ready);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.world-notification[data-type="left"] .world-notification-mark {
+    border-right-color: rgba(130, 147, 159, 0.24);
+    color: var(--world-muted);
+}
+
+.world-notification p {
+    min-width: 0;
+    margin: 0;
+    padding: 9px 11px;
+    overflow-wrap: anywhere;
+    color: #b9c8ce;
+    font-size: 13px;
+    line-height: 1.25;
+}
+
+.world-notification strong {
+    color: var(--world-text);
+    font-weight: 700;
+}
+
+/* ===== PSO2風オンラインチャットの追加部分 ===== */
+.world-chat,
+.world-chat-launcher {
+    position: absolute;
+    z-index: 4;
+    left: clamp(18px, 3vw, 46px);
+}
+
+.world-chat {
+    bottom: 68px;
+    display: grid;
+    width: min(430px, calc(100% - 36px));
+    height: 270px;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    border: 1px solid rgba(89, 222, 232, 0.38);
+    background: rgba(4, 9, 15, 0.9);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.34);
+}
+
+.world-chat[hidden],
+.world-chat-launcher[hidden],
+.world-chat-target-row[hidden] {
+    display: none;
+}
+
+.world-chat-launcher {
+    bottom: 68px;
+    min-width: 92px;
+    min-height: 36px;
+    border: 1px solid rgba(89, 222, 232, 0.48);
+    background: rgba(4, 9, 15, 0.92);
+    color: var(--world-cyan);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.world-chat-launcher:hover,
+.world-chat-launcher:focus-visible {
+    border-color: var(--world-cyan);
+    outline: none;
+    background: rgba(7, 25, 31, 0.96);
+}
+
+.world-chat-unread {
+    display: inline-grid;
+    min-width: 18px;
+    min-height: 18px;
+    margin-left: 6px;
+    place-items: center;
+    border-radius: 50%;
+    background: #d74f68;
+    color: #fff;
+    font-size: 8px;
+}
+
+.world-chat-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 34px;
+    min-height: 38px;
+    border-bottom: 1px solid rgba(89, 222, 232, 0.22);
+}
+
+.world-chat-channels {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.world-chat-channels button,
+.world-chat-close {
+    border: 0;
+    border-right: 1px solid rgba(89, 222, 232, 0.16);
+    background: transparent;
+    color: #6f858e;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 8px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.world-chat-channels button:hover,
+.world-chat-channels button:focus-visible,
+.world-chat-close:hover,
+.world-chat-close:focus-visible {
+    outline: none;
+    background: rgba(89, 222, 232, 0.08);
+    color: var(--world-text);
+}
+
+.world-chat-channels button.is-selected {
+    background: rgba(89, 222, 232, 0.11);
+    color: var(--world-cyan);
+    box-shadow: inset 0 -2px 0 var(--world-cyan);
+}
+
+.world-chat-channels button[data-chat-channel="area"].is-selected {
+    background: rgba(84, 216, 154, 0.1);
+    color: var(--world-ready);
+    box-shadow: inset 0 -2px 0 var(--world-ready);
+}
+
+.world-chat-channels button[data-chat-channel="whisper"].is-selected {
+    background: rgba(255, 93, 115, 0.1);
+    color: #ff7d90;
+    box-shadow: inset 0 -2px 0 #ff5d73;
+}
+
+.world-chat-close {
+    border-right: 0;
+    border-left: 1px solid rgba(89, 222, 232, 0.16);
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+}
+
+.world-chat-log {
+    min-height: 0;
+    padding: 9px 11px;
+    overflow-y: auto;
+    scrollbar-color: rgba(89, 222, 232, 0.34) transparent;
+}
+
+.world-chat-message {
+    padding: 5px 0 7px;
+    border-bottom: 1px solid rgba(130, 147, 159, 0.12);
+}
+
+.world-chat-message[hidden],
+.world-chat-system-message[hidden] {
+    display: none;
+}
+
+.world-chat-message > div {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 7px;
+    align-items: baseline;
+}
+
+.world-chat-message span,
+.world-chat-message time {
+    color: var(--world-cyan);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 7px;
+}
+
+.world-chat-message[data-channel="area"] span {
+    color: var(--world-ready);
+}
+
+.world-chat-message[data-channel="whisper"] span {
+    color: #ff7d90;
+}
+
+.world-chat-message strong {
+    overflow: hidden;
+    color: #dbe8eb;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.world-chat-message time {
+    color: #62737c;
+}
+
+.world-chat-message p {
+    margin: 3px 0 0;
+    overflow-wrap: anywhere;
+    color: var(--world-cyan);
+    font-size: 13px;
+    line-height: 1.3;
+}
+
+.world-chat-message[data-channel="area"] p {
+    color: var(--world-ready);
+}
+
+.world-chat-message[data-channel="whisper"] p {
+    color: #ff7d90;
+}
+
+.world-chat-system-message {
+    margin: 5px 0;
+    color: #ff91a1;
+    font-size: 12px;
+}
+
+.world-chat-form {
+    display: grid;
+    gap: 6px;
+    padding: 8px;
+    border-top: 1px solid rgba(89, 222, 232, 0.2);
+}
+
+.world-chat-target-row,
+.world-chat-input-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+}
+
+.world-chat-target-row {
+    gap: 8px;
+}
+
+.world-chat-target-row label {
+    color: #ff7d90;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 8px;
+    font-weight: 700;
+}
+
+.world-chat-target-row select,
+.world-chat-input-row input,
+.world-chat-input-row button {
+    min-height: 34px;
+    border-radius: 0;
+}
+
+.world-chat-target-row select,
+.world-chat-input-row input {
+    min-width: 0;
+    border: 1px solid rgba(89, 222, 232, 0.3);
+    outline: none;
+    background: rgba(2, 7, 11, 0.96);
+    color: var(--world-text);
+    font-family: inherit;
+}
+
+.world-chat-target-row select {
+    padding: 6px 8px;
+    border-color: rgba(255, 93, 115, 0.52);
+    font-size: 12px;
+}
+
+.world-chat-target-row select:focus {
+    border-color: #ff5d73;
+    box-shadow: inset 0 -2px 0 rgba(255, 93, 115, 0.55);
+}
+
+.world-chat-input-row {
+    grid-template-columns: minmax(0, 1fr) 40px;
+}
+
+.world-chat-input-row input {
+    padding: 7px 10px;
+    font-size: 13px;
+}
+
+.world-chat-input-row input:focus {
+    border-color: var(--world-cyan);
+}
+
+.world-chat-input-row button {
+    border: 1px solid var(--world-cyan);
+    background: rgba(8, 41, 48, 0.96);
+    color: var(--world-cyan);
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.world-chat-input-row button:hover,
+.world-chat-input-row button:focus-visible {
+    outline: none;
+    background: var(--world-cyan);
+    color: #061014;
+}
+
+.world-chat-bubbles {
+    position: absolute;
+    z-index: 3;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.world-chat-bubble {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: max-content;
+    max-width: min(260px, 54vw);
+    padding: 7px 10px;
+    border: 1px solid rgba(89, 222, 232, 0.68);
+    background: rgba(4, 10, 15, 0.94);
+    color: #eefbfc;
+    font-size: 13px;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+    text-align: center;
+    transform: translate(-50%, -100%);
+}
+
+.world-chat-bubble::after {
+    position: absolute;
+    bottom: -7px;
+    left: 50%;
+    border-top: 7px solid rgba(89, 222, 232, 0.78);
+    border-right: 6px solid transparent;
+    border-left: 6px solid transparent;
+    content: "";
+    transform: translateX(-50%);
+}
+
+.world-chat-bubble[data-channel="area"] {
+    border-color: rgba(84, 216, 154, 0.72);
+    color: var(--world-ready);
+}
+
+.world-chat-bubble[data-channel="area"]::after {
+    border-top-color: rgba(84, 216, 154, 0.82);
+}
+
+.world-chat-bubble[data-channel="whisper"] {
+    border-color: rgba(255, 93, 115, 0.76);
+    color: #ff7d90;
+}
+
+.world-chat-bubble[data-channel="whisper"]::after {
+    border-top-color: rgba(255, 93, 115, 0.86);
+}
+
+body:not(.world-entered) .world-chat,
+body:not(.world-entered) .world-chat-launcher,
+body:not(.world-entered) .world-chat-bubbles {
+    visibility: hidden;
 }
 
 .world-wallet {
@@ -1047,6 +1636,15 @@ body:not(.world-entered) .world-sector {
         gap: 4px;
     }
 
+    .world-whisper-notification-button {
+        width: 35px;
+        height: 35px;
+    }
+
+    .world-whisper-notification-panel {
+        top: calc(100% + 8px);
+    }
+
     .world-wallet {
         display: grid;
         gap: 2px;
@@ -1070,6 +1668,27 @@ body:not(.world-entered) .world-sector {
         gap: 6px;
         min-height: 34px;
         padding: 6px 8px;
+    }
+
+    .world-notifications {
+        top: 124px;
+        left: 12px;
+        width: min(330px, calc(100% - 24px));
+    }
+
+    .world-chat,
+    .world-chat-launcher {
+        left: 12px;
+    }
+
+    .world-chat {
+        bottom: 68px;
+        width: calc(100% - 24px);
+        height: min(310px, calc(100vh - 190px));
+    }
+
+    .world-chat-launcher {
+        bottom: 66px;
     }
 
     .pack-shop-overlay {
@@ -1208,7 +1827,15 @@ body:not(.world-entered) .world-sector {
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .world-whisper-notification-button.is-ringing .world-whisper-notification-icon {
+        animation: none;
+    }
+
     .world-loading-mark {
         animation-duration: 1600ms;
+    }
+
+    .world-notification {
+        transition: none;
     }
 }

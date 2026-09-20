@@ -8,18 +8,26 @@ export class MetaverseOnlineClient {
         countElement,
         playerElement,
         getLocalState,
+        onWelcome,
+        onPlayerJoined,
         onPlayersSnapshot,
         onPlayerState,
-        onPlayerLeft
+        onPlayerLeft,
+        onChatMessage,
+        onChatError
     }) {
         this.container = container;
         this.stateElement = stateElement;
         this.countElement = countElement;
         this.playerElement = playerElement;
         this.getLocalState = getLocalState;
+        this.onWelcome = onWelcome;
+        this.onPlayerJoined = onPlayerJoined;
         this.onPlayersSnapshot = onPlayersSnapshot;
         this.onPlayerState = onPlayerState;
         this.onPlayerLeft = onPlayerLeft;
+        this.onChatMessage = onChatMessage;
+        this.onChatError = onChatError;
         this.socket = null;
         this.player = null;
         this.retryCount = 0;
@@ -48,7 +56,6 @@ export class MetaverseOnlineClient {
             this.retryCount = 0;
             this.lastStateSignature = "";
             this.setState("online", "ONLINE");
-            this.startStateSync();
         });
         this.socket.addEventListener("message", event => this.handleMessage(event.data));
         this.socket.addEventListener("close", () => {
@@ -81,7 +88,9 @@ export class MetaverseOnlineClient {
             this.player = message.player;
             this.playerElement.textContent = message.player?.name || "UNKNOWN";
             this.countElement.textContent = String(message.onlineCount || 1);
+            this.onWelcome?.(message.player);
             this.onPlayersSnapshot?.(message.players || []);
+            this.startStateSync();
             this.sendLocalState(true);
             return;
         }
@@ -92,12 +101,24 @@ export class MetaverseOnlineClient {
             );
             return;
         }
+        if (message.type === "player-joined" && message.player?.id !== this.player?.id) {
+            this.onPlayerJoined?.(message.player);
+            return;
+        }
         if (message.type === "player-state" && message.player?.id !== this.player?.id) {
             this.onPlayerState?.(message.player);
             return;
         }
         if (message.type === "player-left") {
-            this.onPlayerLeft?.(message.playerId);
+            this.onPlayerLeft?.(message.player || { id: message.playerId });
+            return;
+        }
+        if (message.type === "chat-message") {
+            this.onChatMessage?.(message.message);
+            return;
+        }
+        if (message.type === "chat-error") {
+            this.onChatError?.(message.code);
         }
     }
 
@@ -126,6 +147,19 @@ export class MetaverseOnlineClient {
         this.socket.send(signature);
         this.lastStateSignature = signature;
         this.lastStateSentAt = now;
+    }
+
+    sendChatMessage({ channel, text, targetId }) {
+        if (this.socket?.readyState !== WebSocket.OPEN) {
+            this.onChatError?.("NOT_CONNECTED");
+            return;
+        }
+        this.socket.send(JSON.stringify({
+            type: "chat-message",
+            channel,
+            text,
+            targetId
+        }));
     }
 
     setState(state, label) {

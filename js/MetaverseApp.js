@@ -1,7 +1,10 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { MetaverseOnlineClient } from "./MetaverseOnlineClient.js?v=3";
+import { MetaverseOnlineClient } from "./MetaverseOnlineClient.js?v=5";
 import { MetaverseTitleScreen } from "./MetaverseTitleScreen.js?v=1";
+import { WorldNotificationCenter } from "./WorldNotificationCenter.js?v=1";
+import { WorldChatPanel } from "./WorldChatPanel.js?v=3";
+import { WhisperNotificationCenter } from "./WhisperNotificationCenter.js?v=1";
 
 export class MetaverseApp {
     constructor({ canvas, loadingElement, statusElement, errorElement }) {
@@ -17,6 +20,7 @@ export class MetaverseApp {
         // 現在いるエリアを記録し、移動範囲や操作対象を切り替える。
         this.currentArea = "lobby";
         this.remotePlayers = new Map();
+        this.chatBubbles = new Map();
 
         // ===== アバター移動の追加部分 =====
         // 押されているキーと移動に使う設定値を、アプリ全体で共有する。
@@ -87,6 +91,39 @@ export class MetaverseApp {
         this.bindWorldInteractions();
         this.initializePackShop();
 
+        // ===== PSO2風オンラインチャットの追加部分 =====
+        this.chatPanel = new WorldChatPanel({
+            element: document.getElementById("world-chat"),
+            launcher: document.getElementById("world-chat-launcher"),
+            unreadElement: document.getElementById("world-chat-unread"),
+            logElement: document.getElementById("world-chat-log"),
+            form: document.getElementById("world-chat-form"),
+            input: document.getElementById("world-chat-input"),
+            targetRow: document.getElementById("world-chat-target-row"),
+            targetSelect: document.getElementById("world-chat-target"),
+            channelButtons: document.querySelectorAll("[data-chat-channel]"),
+            closeButton: document.getElementById("world-chat-close"),
+            onSend: message => this.onlineClient.sendChatMessage(message)
+        });
+        this.chatBubbleContainer = document.getElementById("world-chat-bubbles");
+
+        // ===== WHISPER通知の追加部分 =====
+        // 相手から届いた個人チャットをベルへ蓄積し、選択時に返信欄を開く。
+        this.whisperNotificationCenter = new WhisperNotificationCenter({
+            button: document.getElementById("world-whisper-notification-button"),
+            badge: document.getElementById("world-whisper-notification-badge"),
+            panel: document.getElementById("world-whisper-notification-panel"),
+            list: document.getElementById("world-whisper-notification-list"),
+            emptyMessage: document.getElementById("world-whisper-notification-empty"),
+            closeButton: document.getElementById("world-whisper-notification-close"),
+            onOpenConversation: playerId => this.chatPanel.openWhisper(playerId)
+        });
+
+        // ===== オンライン入退室通知の追加部分 =====
+        this.notificationCenter = new WorldNotificationCenter(
+            document.getElementById("world-notifications")
+        );
+
         // ===== オンライン接続基盤の追加部分 =====
         // 名前入力後にNode.jsサーバーへ接続し、プレイヤー情報と接続人数を受け取る。
         this.onlineClient = new MetaverseOnlineClient({
@@ -95,9 +132,13 @@ export class MetaverseApp {
             countElement: document.getElementById("world-online-count"),
             playerElement: document.getElementById("world-player-name"),
             getLocalState: () => this.getLocalPlayerState(),
+            onWelcome: player => this.applyInitialOnlineSpawn(player),
+            onPlayerJoined: player => this.handleRemotePlayerJoined(player),
             onPlayersSnapshot: players => this.syncRemotePlayers(players),
             onPlayerState: player => this.updateRemotePlayer(player),
-            onPlayerLeft: playerId => this.removeRemotePlayer(playerId)
+            onPlayerLeft: player => this.handleRemotePlayerLeft(player),
+            onChatMessage: message => this.handleChatMessage(message),
+            onChatError: code => this.handleChatError(code)
         });
         this.onlineClient.setState("offline", "STANDBY");
 
@@ -122,6 +163,150 @@ export class MetaverseApp {
         this.onlineClient.setPlayerName(playerName);
         this.onlineClient.connect();
         this.pressedMovementKeys.clear();
+    }
+
+    /**
+     * ===== オンライン出現位置の分散部分 =====
+     * サーバーから割り当てられた初期位置へ、アバターとカメラを一緒に移動する。
+     */
+    applyInitialOnlineSpawn(player) {
+        if (!this.avatar || player?.area !== "lobby") return;
+        const spawnX = Number(player.position?.x);
+        const spawnZ = Number(player.position?.z);
+        const spawnRotationY = Number(player.rotationY);
+        if (!Number.isFinite(spawnX) || !Number.isFinite(spawnZ)) return;
+
+        const movement = new THREE.Vector3(
+            spawnX - this.avatar.position.x,
+            0,
+            spawnZ - this.avatar.position.z
+        );
+        this.avatar.position.set(spawnX, this.avatarBaseY, spawnZ);
+        if (Number.isFinite(spawnRotationY)) this.avatar.rotation.y = spawnRotationY;
+        this.avatar.userData.isMoving = false;
+        this.camera.position.add(movement);
+        this.controls.target.add(movement);
+        this.controls.update();
+        this.chatPanel.setCurrentPlayer(player);
+    }
+
+    /**
+     * ===== オンライン入退室通知の追加部分 =====
+     * 新しく参加したプレイヤーを先に3D空間へ追加し、参加通知を表示する。
+     */
+    handleRemotePlayerJoined(player) {
+        if (!player?.id) return;
+        this.updateRemotePlayer(player);
+        this.chatPanel.addPlayer(player);
+        this.notificationCenter.show({
+            type: "joined",
+            playerName: player.name || "DUELIST"
+        });
+    }
+
+    /**
+     * ===== オンライン入退室通知の追加部分 =====
+     * 退出者の名前を通知してから、対応する3Dアバターを取り除く。
+     */
+    handleRemotePlayerLeft(player) {
+        if (!player?.id) return;
+        const playerName = player.name || this.remotePlayers.get(player.id)?.name || "DUELIST";
+        this.removeRemotePlayer(player.id);
+        this.chatPanel.removePlayer(player.id);
+        this.notificationCenter.show({
+            type: "left",
+            playerName
+        });
+    }
+
+    /**
+     * ===== PSO2風オンラインチャットの追加部分 =====
+     * サーバーから届いた発言をログへ追加し、公開発言はアバター上にも表示する。
+     */
+    handleChatMessage(message) {
+        this.chatPanel.addMessage(message);
+        if (message?.channel === "whisper") {
+            if (message.sender?.id !== this.onlineClient?.player?.id) {
+                this.whisperNotificationCenter.notify(message);
+            }
+            return;
+        }
+        this.showChatBubble(message);
+    }
+
+    handleChatError(code) {
+        const messages = {
+            NOT_CONNECTED: "サーバーへ接続されていません",
+            TOO_FAST: "送信間隔が短すぎます",
+            TARGET_UNAVAILABLE: "送信相手が見つかりません",
+            MESSAGE_TOO_LONG: "メッセージは120文字以内で入力してください",
+            INVALID_CHANNEL: "発言先を確認してください",
+            EMPTY_MESSAGE: "メッセージを入力してください"
+        };
+        this.chatPanel.addSystemMessage(messages[code] || "メッセージを送信できませんでした");
+    }
+
+    showChatBubble(message) {
+        const playerId = message?.sender?.id;
+        if (!playerId || !message.text || !this.chatBubbleContainer) return;
+        this.removeChatBubble(playerId);
+
+        const element = document.createElement("div");
+        element.className = "world-chat-bubble";
+        element.dataset.channel = message.channel;
+        element.textContent = message.text;
+        this.chatBubbleContainer.append(element);
+        this.chatBubbles.set(playerId, {
+            element,
+            expiresAt: performance.now() + 5200
+        });
+    }
+
+    removeChatBubble(playerId) {
+        const bubble = this.chatBubbles.get(playerId);
+        if (!bubble) return;
+        bubble.element.remove();
+        this.chatBubbles.delete(playerId);
+    }
+
+    updateChatBubbles() {
+        if (!this.chatBubbleContainer) return;
+        const now = performance.now();
+        const canvasRect = this.canvas.getBoundingClientRect();
+        const containerRect = this.chatBubbleContainer.getBoundingClientRect();
+
+        this.chatBubbles.forEach((bubble, playerId) => {
+            if (now >= bubble.expiresAt) {
+                this.removeChatBubble(playerId);
+                return;
+            }
+
+            let anchorObject = null;
+            if (playerId === this.onlineClient?.player?.id) {
+                anchorObject = this.avatar;
+            } else {
+                const remotePlayer = this.remotePlayers.get(playerId);
+                if (remotePlayer?.area === this.currentArea && remotePlayer.container.visible) {
+                    anchorObject = remotePlayer.container;
+                }
+            }
+            if (!anchorObject) {
+                bubble.element.hidden = true;
+                return;
+            }
+
+            const screenPosition = new THREE.Vector3(0, 4.8, 0);
+            anchorObject.localToWorld(screenPosition);
+            screenPosition.project(this.camera);
+            if (screenPosition.z < -1 || screenPosition.z > 1) {
+                bubble.element.hidden = true;
+                return;
+            }
+
+            bubble.element.hidden = false;
+            bubble.element.style.left = `${canvasRect.left - containerRect.left + (screenPosition.x * 0.5 + 0.5) * canvasRect.width}px`;
+            bubble.element.style.top = `${canvasRect.top - containerRect.top + (-screenPosition.y * 0.5 + 0.5) * canvasRect.height}px`;
+        });
     }
 
 
@@ -355,6 +540,7 @@ export class MetaverseApp {
         this.remotePlayers.forEach((_remotePlayer, playerId) => {
             if (!activePlayerIds.has(playerId)) this.removeRemotePlayer(playerId);
         });
+        this.chatPanel.setPlayers(players);
     }
 
     /**
@@ -502,6 +688,7 @@ export class MetaverseApp {
         remotePlayer.ownedMaterials.forEach(material => material.dispose());
         remotePlayer.labelTexture.dispose();
         this.remotePlayers.delete(playerId);
+        this.removeChatBubble(playerId);
     }
 
     /**
@@ -2518,6 +2705,10 @@ export class MetaverseApp {
         // ===== オンラインアバター同期の追加部分 =====
         // 受信座標の間を補間し、他プレイヤーを滑らかに表示する。
         this.updateRemotePlayers(deltaTime);
+
+        // ===== PSO2風オンラインチャットの追加部分 =====
+        // 3D座標を画面上へ投影し、発言者の頭上へ吹き出しを追従させる。
+        this.updateChatBubbles();
 
         this.renderer.render(this.scene, this.camera);
         this.animationFrameId = requestAnimationFrame(() => this.animate());

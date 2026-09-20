@@ -16,9 +16,15 @@ const BLOCKED_PATHS = new Set([
     "/RENDER_DEPLOY.md"
 ]);
 const VALID_AREAS = new Set(["lobby", "shop"]);
+const VALID_CHAT_CHANNELS = new Set(["global", "area", "whisper"]);
+const CHAT_MESSAGE_MAX_LENGTH = 120;
+const CHAT_COOLDOWN_MS = 700;
+const SPAWN_POINTS_PER_RING = 8;
+const SPAWN_ANGLE_ORDER = [0, 4, 2, 6, 1, 5, 3, 7];
 
 let playerSequence = 1;
 const players = new Map();
+const occupiedSpawnSlots = new Set();
 const app = express();
 
 app.disable("x-powered-by");
@@ -116,15 +122,116 @@ function sanitizePlayerName(value, fallbackName) {
     return name || fallbackName;
 }
 
+function normalizeChatText(value) {
+    return String(value || "")
+        .replace(/[\u0000-\u001f\u007f]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+function findPlayerSocket(playerId) {
+    for (const [socket, player] of players) {
+        if (player.id === playerId) return { socket, player };
+    }
+    return null;
+}
+
+function sendChatError(socket, code) {
+    sendJson(socket, { type: "chat-error", code });
+}
+
+function handleChatMessage(socket, player, message) {
+    const channel = String(message.channel || "");
+    if (!VALID_CHAT_CHANNELS.has(channel)) {
+        sendChatError(socket, "INVALID_CHANNEL");
+        return;
+    }
+
+    const text = normalizeChatText(message.text);
+    if (!text) {
+        sendChatError(socket, "EMPTY_MESSAGE");
+        return;
+    }
+    if (Array.from(text).length > CHAT_MESSAGE_MAX_LENGTH) {
+        sendChatError(socket, "MESSAGE_TOO_LONG");
+        return;
+    }
+
+    let recipientEntry = null;
+    if (channel === "whisper") {
+        recipientEntry = findPlayerSocket(String(message.targetId || ""));
+        if (!recipientEntry || recipientEntry.player.id === player.id) {
+            sendChatError(socket, "TARGET_UNAVAILABLE");
+            return;
+        }
+    }
+
+    const now = Date.now();
+    if (now - player.lastChatAt < CHAT_COOLDOWN_MS) {
+        sendChatError(socket, "TOO_FAST");
+        return;
+    }
+    player.lastChatAt = now;
+
+    const chatMessage = {
+        id: randomUUID(),
+        channel,
+        text,
+        sender: getPublicPlayer(player),
+        recipient: recipientEntry ? getPublicPlayer(recipientEntry.player) : null,
+        sentAt: now
+    };
+    const payload = { type: "chat-message", message: chatMessage };
+
+    if (channel === "global") {
+        broadcast(payload);
+        return;
+    }
+    if (channel === "area") {
+        players.forEach((otherPlayer, otherSocket) => {
+            if (otherPlayer.area === player.area) sendJson(otherSocket, payload);
+        });
+        return;
+    }
+    sendJson(socket, payload);
+    sendJson(recipientEntry.socket, payload);
+}
+
+function allocateSpawnSlot() {
+    let spawnSlot = 0;
+    while (occupiedSpawnSlots.has(spawnSlot)) spawnSlot += 1;
+    occupiedSpawnSlots.add(spawnSlot);
+    return spawnSlot;
+}
+
+function getLobbySpawnState(spawnSlot) {
+    const ringIndex = Math.floor(spawnSlot / SPAWN_POINTS_PER_RING);
+    const ringSlot = spawnSlot % SPAWN_POINTS_PER_RING;
+    const orderedSlot = SPAWN_ANGLE_ORDER[ringSlot];
+    const angle = -Math.PI / 2 + orderedSlot * (Math.PI * 2 / SPAWN_POINTS_PER_RING);
+    const radius = 2 + ringIndex * 2.2;
+    const x = Number((Math.cos(angle) * radius).toFixed(3));
+    const z = Number((Math.sin(angle) * radius).toFixed(3));
+    const rotationY = Number(Math.atan2(-x, -z).toFixed(3));
+    return {
+        position: { x, y: 0, z },
+        rotationY
+    };
+}
+
 webSocketServer.on("connection", (socket, request) => {
     const fallbackName = `DUELIST-${String(playerSequence).padStart(3, "0")}`;
     const requestUrl = new URL(request.url, "http://localhost");
+    const spawnSlot = allocateSpawnSlot();
+    const spawnState = getLobbySpawnState(spawnSlot);
     const player = {
         id: randomUUID().slice(0, 8),
         name: sanitizePlayerName(requestUrl.searchParams.get("name"), fallbackName),
         area: "lobby",
-        position: { x: 0, y: 0.52, z: 0 },
-        rotationY: 0,
+        position: spawnState.position,
+        rotationY: spawnState.rotationY,
+        spawnSlot,
+        lastChatAt: 0,
         isMoving: false
     };
     playerSequence += 1;
@@ -137,6 +244,10 @@ webSocketServer.on("connection", (socket, request) => {
         players: getPublicPlayers().filter(otherPlayer => otherPlayer.id !== player.id),
         onlineCount: players.size
     });
+    broadcast({
+        type: "player-joined",
+        player: getPublicPlayer(player)
+    }, socket);
     broadcastPresence();
     console.log(`[ONLINE] ${player.name} connected (${players.size})`);
 
@@ -154,6 +265,10 @@ webSocketServer.on("connection", (socket, request) => {
             const message = JSON.parse(rawMessage.toString());
             if (message.type === "ping") {
                 sendJson(socket, { type: "pong" });
+                return;
+            }
+            if (message.type === "chat-message") {
+                handleChatMessage(socket, player, message);
                 return;
             }
             if (message.type !== "player-state") return;
@@ -175,7 +290,12 @@ webSocketServer.on("connection", (socket, request) => {
 
     socket.on("close", () => {
         players.delete(socket);
-        broadcast({ type: "player-left", playerId: player.id });
+        occupiedSpawnSlots.delete(player.spawnSlot);
+        broadcast({
+            type: "player-left",
+            playerId: player.id,
+            player: getPublicPlayer(player)
+        });
         broadcastPresence();
         console.log(`[OFFLINE] ${player.name} disconnected (${players.size})`);
     });

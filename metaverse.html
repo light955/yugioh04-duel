@@ -8,7 +8,7 @@
     <title>Duel Metaverse</title>
     <link rel="icon" href="data:,">
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    <link rel="stylesheet" href="metaverse.css?v=7">
+    <link rel="stylesheet" href="metaverse.css?v=13">
     <script type="importmap">
     {
         "imports": {
@@ -55,6 +55,29 @@
                 </div>
                 <a class="deck-builder-link" href="deck-builder.html">DECK EDITOR</a>
                 <a class="duel-field-link" href="index.html">DUEL FIELD</a>
+                <div class="world-whisper-notification">
+                    <button id="world-whisper-notification-button" class="world-whisper-notification-button"
+                        type="button" title="WHISPER通知" aria-label="WHISPER通知" aria-expanded="false"
+                        aria-controls="world-whisper-notification-panel">
+                        <span class="world-whisper-notification-icon" aria-hidden="true">&#128276;</span>
+                        <span id="world-whisper-notification-badge" class="world-whisper-notification-badge" hidden>0</span>
+                    </button>
+                    <section id="world-whisper-notification-panel" class="world-whisper-notification-panel"
+                        aria-label="WHISPER通知一覧" hidden>
+                        <header>
+                            <div>
+                                <span>PRIVATE CHANNEL</span>
+                                <strong>WHISPER NOTICES</strong>
+                            </div>
+                            <button id="world-whisper-notification-close" type="button" title="閉じる"
+                                aria-label="通知を閉じる">&times;</button>
+                        </header>
+                        <div id="world-whisper-notification-list" class="world-whisper-notification-list"></div>
+                        <p id="world-whisper-notification-empty" class="world-whisper-notification-empty">
+                            新しいWHISPERはありません
+                        </p>
+                    </section>
+                </div>
             </div>
         </header>
 
@@ -66,6 +89,39 @@
             </div>
             <span class="world-online-count"><b id="world-online-count">0</b> USERS</span>
         </div>
+
+        <div id="world-notifications" class="world-notifications" aria-live="polite" aria-atomic="false"></div>
+
+        <button id="world-chat-launcher" class="world-chat-launcher" type="button" aria-controls="world-chat"
+            aria-expanded="false">
+            CHAT
+            <span id="world-chat-unread" class="world-chat-unread" hidden>0</span>
+        </button>
+
+        <section id="world-chat" class="world-chat" aria-label="オンラインチャット" hidden>
+            <header class="world-chat-header">
+                <div class="world-chat-channels" aria-label="発言先">
+                    <button type="button" data-chat-channel="global" aria-pressed="true">GLOBAL</button>
+                    <button type="button" data-chat-channel="area" aria-pressed="false">AREA</button>
+                    <button type="button" data-chat-channel="whisper" aria-pressed="false">WHISPER</button>
+                </div>
+                <button id="world-chat-close" class="world-chat-close" type="button" title="閉じる" aria-label="閉じる">×</button>
+            </header>
+            <div id="world-chat-log" class="world-chat-log" aria-live="polite" aria-relevant="additions"></div>
+            <form id="world-chat-form" class="world-chat-form">
+                <div id="world-chat-target-row" class="world-chat-target-row" hidden>
+                    <label for="world-chat-target">TO</label>
+                    <select id="world-chat-target" aria-label="ウィスパー送信先"></select>
+                </div>
+                <div class="world-chat-input-row">
+                    <input id="world-chat-input" type="text" maxlength="120" autocomplete="off" placeholder="GLOBALに発言"
+                        aria-label="チャットメッセージ">
+                    <button type="submit" title="送信" aria-label="送信">›</button>
+                </div>
+            </form>
+        </section>
+
+        <div id="world-chat-bubbles" class="world-chat-bubbles" aria-hidden="true"></div>
 
         <div class="world-status" aria-live="polite">
             <span class="world-status-light" aria-hidden="true"></span>
@@ -163,7 +219,7 @@
         </div>
     </main>
 
-    <script type="module" src="js/MetaverseApp.js?v=19"></script>
+    <script type="module" src="js/MetaverseApp.js?v=23"></script>
 </body>
 
 </html>
